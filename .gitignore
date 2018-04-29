@@ -1,0 +1,4 @@
+blackjack
+*.o
+*~
+bj.txt
