@@ -28,6 +28,8 @@ int main(int argc, char *argv[])
   SDL_Renderer *renderer = NULL;
   SDL_Surface *bg_surface = NULL;
   SDL_Texture *bg_texture = NULL;
+  SDL_Surface *cards_surface = NULL;
+  SDL_Texture *cards_texture = NULL;
 
   if(SDL_Init(SDL_INIT_VIDEO) < 0)
   {
@@ -44,7 +46,7 @@ int main(int argc, char *argv[])
     SDL_WINDOW_OPENGL
   );
 
-  if (window == NULL)
+  if(window == NULL)
   {
     printf("Could not create window: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
@@ -58,7 +60,7 @@ int main(int argc, char *argv[])
   }
 
   bg_surface = SDL_LoadBMP("img/bg.bmp");
-  if( bg_surface == NULL )
+  if(bg_surface == NULL)
   {
     printf( "Unable to load image %s! SDL Error: %s\n", "img/bg.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
@@ -67,13 +69,34 @@ int main(int argc, char *argv[])
   bg_texture = SDL_CreateTextureFromSurface(renderer, bg_surface);
   SDL_FreeSurface(bg_surface);
 
+  cards_surface = SDL_LoadBMP("img/cards.bmp");
+  if(cards_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/cards.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  cards_texture = SDL_CreateTextureFromSurface(renderer, cards_surface);
+  SDL_FreeSurface(cards_surface);
+
+  
   while(!quit)
   {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
     // TODO: draw
+    
+    SDL_Rect clip[1];
+    clip[0].x = 0;
+    clip[0].y = 0;
+    clip[0].w = 118;
+    clip[0].h = 165;
 
+    SDL_Rect offset = { 0, 0, 118, 165 };
+
+    SDL_RenderCopy(renderer, cards_texture, &clip[0], &offset);
+    
     SDL_RenderPresent(renderer);
 
     while(SDL_PollEvent(&event) != 0)
