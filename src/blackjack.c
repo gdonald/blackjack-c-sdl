@@ -62,8 +62,8 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, int suite, int value, int pos_x, int pos_y)
 {  
   SDL_Rect clip[1];
-  clip[0].x = (suite * CARD_SPACE_X) + (suite * CARD_W);
-  clip[0].y = (value * CARD_SPACE_Y) + (value * CARD_H);
+  clip[0].x = (suite * CARD_SPACE) + (suite * CARD_W);
+  clip[0].y = (value * CARD_SPACE) + (value * CARD_H);
   clip[0].w = CARD_W;
   clip[0].h = CARD_H;
 

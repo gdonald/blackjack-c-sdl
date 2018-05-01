@@ -23,11 +23,10 @@
 #define SCREEN_W  1024
 #define SCREEN_H  768
 
-#define CARD_SPACE_X 21
-#define CARD_SPACE_Y 21
+#define CARD_SPACE 1
 
-#define CARD_W 118
-#define CARD_H 165
+#define CARD_W 119
+#define CARD_H 166
 
 extern const char *argp_program_version;
 extern const char *argp_program_bug_address;
