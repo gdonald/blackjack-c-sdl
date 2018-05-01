@@ -85,17 +85,13 @@ int main(int argc, char *argv[])
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
-    // TODO: draw
-    
-    SDL_Rect clip[1];
-    clip[0].x = 0;
-    clip[0].y = 0;
-    clip[0].w = 118;
-    clip[0].h = 165;
+    draw_card(renderer, cards_texture, 0, 0, 0, 0);
+    draw_card(renderer, cards_texture, 1, 4, 18, 0);
 
-    SDL_Rect offset = { 0, 0, 118, 165 };
+    draw_card(renderer, cards_texture, 0, 0, 0, 200);
+    draw_card(renderer, cards_texture, 1, 1, 18, 200);
+    draw_card(renderer, cards_texture, 2, 2, 36, 200);
 
-    SDL_RenderCopy(renderer, cards_texture, &clip[0], &offset);
     
     SDL_RenderPresent(renderer);
 

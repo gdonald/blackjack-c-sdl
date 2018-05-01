@@ -23,6 +23,12 @@
 #define SCREEN_W  1024
 #define SCREEN_H  768
 
+#define CARD_SPACE_X 21
+#define CARD_SPACE_Y 21
+
+#define CARD_W 118
+#define CARD_H 165
+
 extern const char *argp_program_version;
 extern const char *argp_program_bug_address;
 extern const char *doc;
@@ -116,6 +122,7 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
+void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, int col, int row, int pos_x, int pos_y);
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);
 void load_game(struct Game *game);
