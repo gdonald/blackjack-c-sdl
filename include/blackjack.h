@@ -107,6 +107,11 @@ error_t parse_opt(int key, char *arg, struct argp_state *state);
 
 const char *card_to_string(const struct Game *game, const struct Card *card);
 
+SDL_Texture *load_cards_texture(SDL_Renderer *renderer);
+SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
+SDL_Renderer *create_renderer(SDL_Window *window);
+SDL_Window *create_window(void);
+
 bool is_ace(const struct Card *card);
 bool is_ten(const struct Card *card);
 bool player_is_busted(const struct PlayerHand *player_hand);

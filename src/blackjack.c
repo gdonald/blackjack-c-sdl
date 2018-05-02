@@ -59,6 +59,74 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
   }
 }
 
+SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *cards_surface = SDL_LoadBMP("img/cards.bmp");
+  if(cards_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/cards.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *cards_texture = SDL_CreateTextureFromSurface(renderer, cards_surface);
+  SDL_FreeSurface(cards_surface);
+
+  return cards_texture;
+}
+
+SDL_Texture *load_bg_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *bg_surface = SDL_LoadBMP("img/bg.bmp");
+  if(bg_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/bg.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *bg_texture = SDL_CreateTextureFromSurface(renderer, bg_surface);
+  SDL_FreeSurface(bg_surface);
+
+  return bg_texture;
+}
+
+SDL_Renderer *create_renderer(SDL_Window *window)
+{
+  SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  if(renderer == NULL)
+  {
+    printf("Count not get renderer! SDL Error: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  return renderer;
+}
+
+SDL_Window *create_window(void)
+{
+  if(SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
+    printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Window *window = SDL_CreateWindow(
+    "Blackjack",
+    SDL_WINDOWPOS_UNDEFINED,
+    SDL_WINDOWPOS_UNDEFINED,
+    SCREEN_W,
+    SCREEN_H,
+    SDL_WINDOW_OPENGL
+  );
+
+  if(window == NULL)
+  {
+    printf("Could not create window: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  return window;
+}
+
 void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned suite, const unsigned value, const unsigned pos_x, const unsigned pos_y)
 {  
   SDL_Rect clip[1];
