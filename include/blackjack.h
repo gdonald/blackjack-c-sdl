@@ -23,7 +23,11 @@
 #define SCREEN_W  1024
 #define SCREEN_H  768
 
-#define CARD_SPACE 1
+#define DEALER_HAND_Y_OFFSET 80
+#define PLAYER_HANDS_Y_OFFSET 450
+
+#define CARD_BMAP_SPACING 1
+#define CARD_DRAW_SPACING 19
 
 #define CARD_W 119
 #define CARD_H 166
@@ -84,6 +88,8 @@ struct PlayerHand
 
 struct Game
 {
+  SDL_Renderer *renderer;
+  SDL_Texture *cards_texture;
   struct Shoe shoe;
   struct DealerHand dealer_hand;
   struct PlayerHand player_hands[MAX_PLAYER_HANDS];
@@ -121,7 +127,7 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
-void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, int col, int row, int pos_x, int pos_y);
+void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned col, const unsigned row, const unsigned pos_x, const unsigned pos_y);
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);
 void load_game(struct Game *game);
@@ -129,7 +135,7 @@ void pay_hands(struct Game *game);
 void deal_card(struct Shoe *shoe, struct Hand *hand);
 void play_dealer_hand(struct Game *game);
 void draw_dealer_hand(const struct Game *game);
-void player_draw_hand(const struct Game *game, unsigned index);
+void draw_player_hand(const struct Game *game, unsigned index);
 void draw_hands(const struct Game *game);
 void swap(struct Card *a, struct Card *b);
 void shuffle(struct Shoe *shoe);

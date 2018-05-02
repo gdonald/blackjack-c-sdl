@@ -59,15 +59,15 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
   }
 }
 
-void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, int suite, int value, int pos_x, int pos_y)
+void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned suite, const unsigned value, const unsigned pos_x, const unsigned pos_y)
 {  
   SDL_Rect clip[1];
-  clip[0].x = (suite * CARD_SPACE) + (suite * CARD_W);
-  clip[0].y = (value * CARD_SPACE) + (value * CARD_H);
+  clip[0].x = ((int) suite * CARD_BMAP_SPACING) + ((int) suite * CARD_W);
+  clip[0].y = ((int) value * CARD_BMAP_SPACING) + ((int) value * CARD_H);
   clip[0].w = CARD_W;
   clip[0].h = CARD_H;
 
-  SDL_Rect offset = { pos_x, pos_y, CARD_W, CARD_H };
+  SDL_Rect offset = { (int) pos_x, (int) pos_y, CARD_W, CARD_H };
 
   SDL_RenderCopy(renderer, cards_texture, &clip[0], &offset);
 }
@@ -437,33 +437,40 @@ void draw_dealer_hand(const struct Game *game)
 
   printf(" ");
 
+  unsigned x_offset = (SCREEN_W / 2) - (((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + (CARD_W / 2));
+
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
     if(i == 1 && dealer_hand->hide_down_card)
     {
       printf("%s ", game->card_faces[13][0]);
+      draw_card(game->renderer, game->cards_texture, 1, 4, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
     }
     else
     {
       card = &dealer_hand->hand.cards[i];
       printf("%s ", game->card_faces[card->value][card->suit]);
+      draw_card(game->renderer, game->cards_texture, card->value, card->suit, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
     }
   }
 
   printf(" ⇒  %u", dealer_get_value(dealer_hand, Soft));
 }
 
-void player_draw_hand(const struct Game *game, unsigned index)
+void draw_player_hand(const struct Game *game, unsigned index)
 {
   const struct PlayerHand *player_hand = &game->player_hands[index];
   const struct Card *card;
 
   printf(" ");
 
+  unsigned x_offset = (SCREEN_W / 2) - (((player_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + (CARD_W / 2));
+
   for(unsigned i = 0; i < player_hand->hand.num_cards; ++i)
   {
     card = &player_hand->hand.cards[i];
     printf("%s ", game->card_faces[card->value][card->suit]);
+    draw_card(game->renderer, game->cards_texture, card->value, card->suit, x_offset + (i * CARD_DRAW_SPACING), PLAYER_HANDS_Y_OFFSET);
   }
 
   printf(" ⇒  %u  ", player_get_value(player_hand, Soft));
@@ -511,7 +518,7 @@ void draw_hands(const struct Game *game)
 
   for(unsigned x = 0; x < game->total_player_hands; x++)
   {
-    player_draw_hand(game, x);
+    draw_player_hand(game, x);
   }
 }
 

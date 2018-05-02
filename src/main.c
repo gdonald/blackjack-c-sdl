@@ -79,19 +79,15 @@ int main(int argc, char *argv[])
   cards_texture = SDL_CreateTextureFromSurface(renderer, cards_surface);
   SDL_FreeSurface(cards_surface);
 
+  game.renderer = renderer;
+  game.cards_texture = cards_texture;
   
   while(!quit)
   {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
-    draw_card(renderer, cards_texture, 0, 0, 0, 0);
-    draw_card(renderer, cards_texture, 1, 4, 18, 0);
-
-    draw_card(renderer, cards_texture, 0, 0, 0, 200);
-    draw_card(renderer, cards_texture, 1, 1, 18, 200);
-    draw_card(renderer, cards_texture, 2, 2, 36, 200);
-
+    draw_hands(&game);
     
     SDL_RenderPresent(renderer);
 
