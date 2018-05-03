@@ -55,8 +55,46 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 {
   if(button->button == SDL_BUTTON_LEFT)
   {
-    // TODO
+    // BtnHit
+    if(mouse_x > game->hand_rects[BtnHit].x &&
+       mouse_x < game->hand_rects[BtnHit].x + game->hand_rects[BtnHit].w &&
+       mouse_y > game->hand_rects[BtnHit].y &&
+       mouse_y < game->hand_rects[BtnHit].y + game->hand_rects[BtnHit].h)
+    {
+      player_hit(game);      
+    }
   }
+}
+
+void draw_btns(struct Game *game, SDL_Texture *btn_hit_texture)
+{
+  SDL_Rect clip[1];
+  clip[0].x = 0;
+  clip[0].y = 0;
+  clip[0].w = BTN_W;
+  clip[0].h = BTN_H;
+
+  game->hand_rects[BtnHit].x = (SCREEN_W / 2) - (BTN_W / 2);
+  game->hand_rects[BtnHit].y = BUTTONS_Y_OFFSET;
+  game->hand_rects[BtnHit].w = BTN_W;
+  game->hand_rects[BtnHit].h = BTN_H;
+  
+  SDL_RenderCopy(game->renderer, btn_hit_texture, &clip[0], &game->hand_rects[BtnHit]);
+}
+
+SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *btn_hit_surface = SDL_LoadBMP("img/btn_hit.bmp");
+  if(btn_hit_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *btn_hit_texture = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
+  SDL_FreeSurface(btn_hit_surface);
+
+  return btn_hit_texture;
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
@@ -505,7 +543,7 @@ void draw_dealer_hand(const struct Game *game)
 
   printf(" ");
 
-  unsigned x_offset = (SCREEN_W / 2) - (((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + (CARD_W / 2));
+  unsigned x_offset = (SCREEN_W / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
 
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
@@ -532,7 +570,7 @@ void draw_player_hand(const struct Game *game, unsigned index)
 
   printf(" ");
 
-  unsigned x_offset = (SCREEN_W / 2) - (((player_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + (CARD_W / 2));
+  unsigned x_offset = (SCREEN_W / 2) - ((((player_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
 
   for(unsigned i = 0; i < player_hand->hand.num_cards; ++i)
   {
@@ -941,7 +979,7 @@ void process(struct Game *game)
 
   play_dealer_hand(game);
   draw_hands(game);
-  bet_options(game);
+  //bet_options(game);
 }
 
 void play_more_hands(struct Game *game)
@@ -971,7 +1009,7 @@ void player_hit(struct Game *game)
   }
   
   draw_hands(game);
-  player_get_action(game);
+  //player_get_action(game);
 }
 
 void player_stand(struct Game *game)

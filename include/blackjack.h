@@ -25,12 +25,16 @@
 
 #define DEALER_HAND_Y_OFFSET 80
 #define PLAYER_HANDS_Y_OFFSET 450
+#define BUTTONS_Y_OFFSET 640
 
 #define CARD_BMAP_SPACING 1
 #define CARD_DRAW_SPACING 19
 
 #define CARD_W 119
 #define CARD_H 166
+
+#define BTN_W 120
+#define BTN_H 40
 
 extern const char *argp_program_version;
 extern const char *argp_program_bug_address;
@@ -40,6 +44,7 @@ extern struct argp_option options[];
 
 enum CountMethod { Soft, Hard };
 enum HandStatus { Won=1, Lost, Push };
+enum HandButtons { BtnHit, BtnStand, BtnSplit, BtnDouble };
 
 extern const unsigned shuffle_specs[8][2];
 extern const char *const card_faces[14][4];
@@ -88,8 +93,6 @@ struct PlayerHand
 
 struct Game
 {
-  SDL_Renderer *renderer;
-  SDL_Texture *cards_texture;
   struct Shoe shoe;
   struct DealerHand dealer_hand;
   struct PlayerHand player_hands[MAX_PLAYER_HANDS];
@@ -101,12 +104,16 @@ struct Game
   unsigned total_player_hands;
   const unsigned (*shuffle_specs)[2];
   const char *const (*card_faces)[4];
+  SDL_Renderer *renderer;
+  SDL_Texture *cards_texture;
+  SDL_Rect hand_rects[4];
 };
 
 error_t parse_opt(int key, char *arg, struct argp_state *state);
 
 const char *card_to_string(const struct Game *game, const struct Card *card);
 
+SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer);
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer);
 SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
 SDL_Renderer *create_renderer(SDL_Window *window);
@@ -133,6 +140,8 @@ unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
 void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned col, const unsigned row, const unsigned pos_x, const unsigned pos_y);
+void draw_btns(struct Game *game, SDL_Texture *btn_hit_texture);
+
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);
 void load_game(struct Game *game);

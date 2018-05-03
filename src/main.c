@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
   SDL_Renderer *renderer = create_renderer(window);
   SDL_Texture *bg_texture = load_bg_texture(renderer);
   SDL_Texture *cards_texture = load_cards_texture(renderer);
+  SDL_Texture *btn_hit_texture = load_btn_hit_texture(renderer);
 
   struct Game game = { .num_decks = 8,
 		       .money = 10000,
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
     draw_hands(&game);
+    draw_btns(&game, btn_hit_texture);
     
     SDL_RenderPresent(renderer);
 
