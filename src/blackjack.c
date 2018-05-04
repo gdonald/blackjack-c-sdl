@@ -61,12 +61,12 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
        mouse_y > game->hand_rects[BtnHit].y &&
        mouse_y < game->hand_rects[BtnHit].y + game->hand_rects[BtnHit].h)
     {
-      player_hit(game);      
+      player_hit(game);
     }
   }
 }
 
-void draw_btns(struct Game *game, SDL_Texture *btn_hit_texture)
+void draw_btns(struct Game *game)
 {
   SDL_Rect clip[1];
   clip[0].x = 0;
@@ -78,8 +78,8 @@ void draw_btns(struct Game *game, SDL_Texture *btn_hit_texture)
   game->hand_rects[BtnHit].y = BUTTONS_Y_OFFSET;
   game->hand_rects[BtnHit].w = BTN_W;
   game->hand_rects[BtnHit].h = BTN_H;
-  
-  SDL_RenderCopy(game->renderer, btn_hit_texture, &clip[0], &game->hand_rects[BtnHit]);
+
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnHit], &clip[0], &game->hand_rects[BtnHit]);
 }
 
 SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer)
@@ -95,6 +95,51 @@ SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer)
   SDL_FreeSurface(btn_hit_surface);
 
   return btn_hit_texture;
+}
+
+SDL_Texture *load_btn_split_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *btn_split_surface = SDL_LoadBMP("img/btn_split.bmp");
+  if(btn_split_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *btn_split_texture = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
+  SDL_FreeSurface(btn_split_surface);
+
+  return btn_split_texture;
+}
+
+SDL_Texture *load_btn_stand_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *btn_stand_surface = SDL_LoadBMP("img/btn_stand.bmp");
+  if(btn_stand_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *btn_stand_texture = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
+  SDL_FreeSurface(btn_stand_surface);
+
+  return btn_stand_texture;
+}
+
+SDL_Texture *load_btn_double_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *btn_double_surface = SDL_LoadBMP("img/btn_double.bmp");
+  if(btn_double_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_double.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *btn_double_texture = SDL_CreateTextureFromSurface(renderer, btn_double_surface);
+  SDL_FreeSurface(btn_double_surface);
+
+  return btn_double_texture;
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
@@ -1000,6 +1045,10 @@ void play_more_hands(struct Game *game)
 void player_hit(struct Game *game)
 {
   struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
+
+  if(!player_can_hit(player_hand))
+    return;
+
   deal_card(&game->shoe, &player_hand->hand);
 
   if(player_is_done(game, player_hand))

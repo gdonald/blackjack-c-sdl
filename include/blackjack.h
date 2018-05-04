@@ -106,6 +106,7 @@ struct Game
   const char *const (*card_faces)[4];
   SDL_Renderer *renderer;
   SDL_Texture *cards_texture;
+  SDL_Texture *btn_textures[4];
   SDL_Rect hand_rects[4];
 };
 
@@ -114,6 +115,9 @@ error_t parse_opt(int key, char *arg, struct argp_state *state);
 const char *card_to_string(const struct Game *game, const struct Card *card);
 
 SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer);
+SDL_Texture *load_btn_split_texture(SDL_Renderer *renderer);
+SDL_Texture *load_btn_stand_texture(SDL_Renderer *renderer);
+SDL_Texture *load_btn_double_texture(SDL_Renderer *renderer);
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer);
 SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
 SDL_Renderer *create_renderer(SDL_Window *window);
@@ -140,7 +144,7 @@ unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
 void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned col, const unsigned row, const unsigned pos_x, const unsigned pos_y);
-void draw_btns(struct Game *game, SDL_Texture *btn_hit_texture);
+void draw_btns(struct Game *game);
 
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);
