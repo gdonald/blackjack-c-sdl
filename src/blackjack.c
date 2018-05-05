@@ -62,84 +62,129 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
        mouse_y < game->hand_rects[BtnHit].y + game->hand_rects[BtnHit].h)
     {
       player_hit(game);
+      return;
+    }
+
+    if(mouse_x > game->hand_rects[BtnStand].x &&
+       mouse_x < game->hand_rects[BtnStand].x + game->hand_rects[BtnStand].w &&
+       mouse_y > game->hand_rects[BtnStand].y &&
+       mouse_y < game->hand_rects[BtnStand].y + game->hand_rects[BtnStand].h)
+    {
+      player_stand(game);
+      return;
+    }
+
+    if(mouse_x > game->hand_rects[BtnDouble].x &&
+       mouse_x < game->hand_rects[BtnDouble].x + game->hand_rects[BtnDouble].w &&
+       mouse_y > game->hand_rects[BtnDouble].y &&
+       mouse_y < game->hand_rects[BtnDouble].y + game->hand_rects[BtnDouble].h)
+    {
+      player_dbl(game);
+      return;
+    }
+
+    if(mouse_x > game->hand_rects[BtnSplit].x &&
+       mouse_x < game->hand_rects[BtnSplit].x + game->hand_rects[BtnSplit].w &&
+       mouse_y > game->hand_rects[BtnSplit].y &&
+       mouse_y < game->hand_rects[BtnSplit].y + game->hand_rects[BtnSplit].h)
+    {
+      player_split(game);
+      return;
     }
   }
 }
 
-void draw_btns(struct Game *game)
+void draw_hand_btns(struct Game *game)
 {
-  SDL_Rect clip[1];
-  clip[0].x = 0;
-  clip[0].y = 0;
-  clip[0].w = BTN_W;
-  clip[0].h = BTN_H;
+  struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
 
-  game->hand_rects[BtnHit].x = (SCREEN_W / 2) - (BTN_W / 2);
+  SDL_Rect clip[4];
+  clip[BtnDouble].x = 0;
+  clip[BtnDouble].y = player_can_dbl(game) ? BtnUp : BtnOff;
+  clip[BtnDouble].w = BTN_W;
+  clip[BtnDouble].h = BTN_H;
+
+  clip[BtnHit].x = 0;
+  clip[BtnHit].y = player_can_hit(player_hand) ? BtnUp : BtnOff;
+  clip[BtnHit].w = BTN_W;
+  clip[BtnHit].h = BTN_H;
+
+  clip[BtnStand].x = 0;
+  clip[BtnStand].y = player_can_stand(player_hand) ? BtnUp : BtnOff;
+  clip[BtnStand].w = BTN_W;
+  clip[BtnStand].h = BTN_H;
+
+  clip[BtnSplit].x = 0;
+  clip[BtnSplit].y = player_can_split(game) ? BtnUp : BtnOff;
+  clip[BtnSplit].w = BTN_W;
+  clip[BtnSplit].h = BTN_H;
+
+  game->hand_rects[BtnDouble].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->hand_rects[BtnDouble].y = BUTTONS_Y_OFFSET;
+  game->hand_rects[BtnDouble].w = BTN_W;
+  game->hand_rects[BtnDouble].h = BTN_H;
+
+  game->hand_rects[BtnHit].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
   game->hand_rects[BtnHit].y = BUTTONS_Y_OFFSET;
   game->hand_rects[BtnHit].w = BTN_W;
   game->hand_rects[BtnHit].h = BTN_H;
 
-  SDL_RenderCopy(game->renderer, game->btn_textures[BtnHit], &clip[0], &game->hand_rects[BtnHit]);
+  game->hand_rects[BtnStand].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
+  game->hand_rects[BtnStand].y = BUTTONS_Y_OFFSET;
+  game->hand_rects[BtnStand].w = BTN_W;
+  game->hand_rects[BtnStand].h = BTN_H;
+
+  game->hand_rects[BtnSplit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
+  game->hand_rects[BtnSplit].y = BUTTONS_Y_OFFSET;
+  game->hand_rects[BtnSplit].w = BTN_W;
+  game->hand_rects[BtnSplit].h = BTN_H;
+  
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnDouble], &clip[BtnDouble], &game->hand_rects[BtnDouble]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnHit],    &clip[BtnHit],    &game->hand_rects[BtnHit]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnStand],  &clip[BtnStand],  &game->hand_rects[BtnStand]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnSplit],  &clip[BtnSplit],  &game->hand_rects[BtnSplit]);
 }
 
-SDL_Texture *load_btn_hit_texture(SDL_Renderer *renderer)
+void load_btn_textures(struct Game *game, SDL_Renderer *renderer)
 {
-  SDL_Surface *btn_hit_surface = SDL_LoadBMP("img/btn_hit.bmp");
+  SDL_Surface *btn_hit_surface    = SDL_LoadBMP("img/btn_hit.bmp");
+  SDL_Surface *btn_split_surface  = SDL_LoadBMP("img/btn_split.bmp");
+  SDL_Surface *btn_stand_surface  = SDL_LoadBMP("img/btn_stand.bmp");
+  SDL_Surface *btn_double_surface = SDL_LoadBMP("img/btn_double.bmp");
+
   if(btn_hit_surface == NULL)
   {
     printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
-  SDL_Texture *btn_hit_texture = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
-  SDL_FreeSurface(btn_hit_surface);
-
-  return btn_hit_texture;
-}
-
-SDL_Texture *load_btn_split_texture(SDL_Renderer *renderer)
-{
-  SDL_Surface *btn_split_surface = SDL_LoadBMP("img/btn_split.bmp");
   if(btn_split_surface == NULL)
   {
     printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
-  SDL_Texture *btn_split_texture = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
-  SDL_FreeSurface(btn_split_surface);
-
-  return btn_split_texture;
-}
-
-SDL_Texture *load_btn_stand_texture(SDL_Renderer *renderer)
-{
-  SDL_Surface *btn_stand_surface = SDL_LoadBMP("img/btn_stand.bmp");
   if(btn_stand_surface == NULL)
   {
     printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
-  SDL_Texture *btn_stand_texture = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
-  SDL_FreeSurface(btn_stand_surface);
-
-  return btn_stand_texture;
-}
-
-SDL_Texture *load_btn_double_texture(SDL_Renderer *renderer)
-{
-  SDL_Surface *btn_double_surface = SDL_LoadBMP("img/btn_double.bmp");
   if(btn_double_surface == NULL)
   {
     printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_double.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
-
-  SDL_Texture *btn_double_texture = SDL_CreateTextureFromSurface(renderer, btn_double_surface);
+  
+  game->btn_textures[BtnHit]    = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
+  game->btn_textures[BtnSplit]  = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
+  game->btn_textures[BtnStand]  = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
+  game->btn_textures[BtnDouble] = SDL_CreateTextureFromSurface(renderer, btn_double_surface);
+  
+  SDL_FreeSurface(btn_hit_surface);
+  SDL_FreeSurface(btn_stand_surface);
   SDL_FreeSurface(btn_double_surface);
-
-  return btn_double_texture;
+  SDL_FreeSurface(btn_split_surface);
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)

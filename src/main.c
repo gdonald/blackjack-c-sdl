@@ -27,10 +27,7 @@ int main(int argc, char *argv[])
 		       .renderer = renderer,
 		       .cards_texture = cards_texture };
 
-  game.btn_textures[BtnHit]    = load_btn_hit_texture(renderer);
-  game.btn_textures[BtnSplit]  = load_btn_split_texture(renderer);
-  game.btn_textures[BtnStand]  = load_btn_stand_texture(renderer);
-  game.btn_textures[BtnDouble] = load_btn_double_texture(renderer);
+  load_btn_textures(&game, renderer);
   
   load_game(&game);
   new_regular(&game);
@@ -42,7 +39,7 @@ int main(int argc, char *argv[])
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
     draw_hands(&game);
-    draw_btns(&game);
+    draw_hand_btns(&game);
     
     SDL_RenderPresent(renderer);
 
