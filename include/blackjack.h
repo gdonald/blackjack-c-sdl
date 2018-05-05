@@ -15,7 +15,7 @@
 #define CARDS_PER_DECK 52
 #define MAX_CARDS_PER_HAND 11
 #define MAX_DECKS 8
-#define MAX_PLAYER_HANDS 7
+#define MAX_PLAYER_HANDS 6
 #define MIN_BET 500
 #define MAX_BET 10000000
 #define SAVE_FILE "bj.txt"
@@ -29,6 +29,7 @@
 
 #define CARD_BMAP_SPACING 1
 #define CARD_DRAW_SPACING 19
+#define HAND_DRAW_SPACING 19
 
 #define CARD_W 119
 #define CARD_H 166
@@ -145,7 +146,7 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
-void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned col, const unsigned row, const unsigned pos_x, const unsigned pos_y);
+void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
 void load_btn_textures(struct Game *game, SDL_Renderer *renderer);
@@ -157,7 +158,7 @@ void pay_hands(struct Game *game);
 void deal_card(struct Shoe *shoe, struct Hand *hand);
 void play_dealer_hand(struct Game *game);
 void draw_dealer_hand(const struct Game *game);
-void draw_player_hand(const struct Game *game, unsigned index);
+void draw_player_hands(const struct Game *game);
 void draw_hands(const struct Game *game);
 void swap(struct Card *a, struct Card *b);
 void shuffle(struct Shoe *shoe);
@@ -166,7 +167,6 @@ void no_insurance(struct Game *game);
 void ask_insurance(struct Game *game);
 void deal_new_hand(struct Game *game);
 void get_new_bet(struct Game *game);
-//void bet_options(struct Game *game);
 void game_options(struct Game *game);
 void get_new_num_decks(struct Game *game);
 void get_new_deck_type(struct Game *game);
@@ -176,7 +176,6 @@ void player_hit(struct Game *game);
 void player_stand(struct Game *game);
 void player_split(struct Game *game);
 void player_dbl(struct Game *game);
-//void player_get_action(struct Game *game);
 void new_regular(struct Game *game);
 void new_aces(struct Game *game);
 void new_aces_jacks(struct Game *game);

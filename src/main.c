@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
   load_btn_textures(&game, renderer);
   
   load_game(&game);
-  new_regular(&game);
+  //new_regular(&game);
+  new_aces(&game);
   deal_new_hand(&game);
   
   while(!quit)

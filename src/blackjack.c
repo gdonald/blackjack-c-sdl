@@ -367,17 +367,17 @@ SDL_Window *create_window(void)
   return window;
 }
 
-void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned suite, const unsigned value, const unsigned pos_x, const unsigned pos_y)
+void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y)
 {  
   SDL_Rect clip[1];
-  clip[0].x = ((int) suite * CARD_BMAP_SPACING) + ((int) suite * CARD_W);
-  clip[0].y = ((int) value * CARD_BMAP_SPACING) + ((int) value * CARD_H);
+  clip[0].x = ((int) card->value * CARD_BMAP_SPACING) + ((int) card->value * CARD_W);
+  clip[0].y = ((int) card->suit  * CARD_BMAP_SPACING) + ((int) card->suit  * CARD_H);
   clip[0].w = CARD_W;
   clip[0].h = CARD_H;
 
-  SDL_Rect offset = { (int) pos_x, (int) pos_y, CARD_W, CARD_H };
+  SDL_Rect offset = { (int) x, (int) y, CARD_W, CARD_H };
 
-  SDL_RenderCopy(renderer, cards_texture, &clip[0], &offset);
+  SDL_RenderCopy(game->renderer, game->cards_texture, &clip[0], &offset);
 }
 
 bool is_ace(const struct Card *card)
@@ -743,91 +743,82 @@ void draw_dealer_hand(const struct Game *game)
   const struct DealerHand *dealer_hand = &game->dealer_hand;
   const struct Card *card;
 
-  printf(" ");
-
   unsigned x_offset = (SCREEN_W / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
 
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
     if(i == 1 && dealer_hand->hide_down_card)
     {
-      printf("%s ", game->card_faces[13][0]);
-      draw_card(game->renderer, game->cards_texture, 1, 4, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
+      struct Card c = { .value = 1, .suit = 4 };
+      draw_card(game, &c, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
     }
     else
     {
       card = &dealer_hand->hand.cards[i];
-      printf("%s ", game->card_faces[card->value][card->suit]);
-      draw_card(game->renderer, game->cards_texture, card->value, card->suit, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
+      draw_card(game, card, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
+    }
+  }
+}
+
+void draw_player_hands(const struct Game *game)
+{
+  unsigned x_offset, x, h, c, hands_w = 0;
+  unsigned hand_space = HAND_DRAW_SPACING - game->total_player_hands;
+  unsigned card_space = CARD_DRAW_SPACING - game->total_player_hands;
+
+  const struct PlayerHand *player_hand;
+  const struct Card *card;
+  
+  for(h = 0; h < game->total_player_hands; h++)
+  {
+    player_hand = &game->player_hands[h];
+
+    for(c = 0; c < player_hand->hand.num_cards - 1; c++)
+    {
+      hands_w += card_space;
+    }
+
+    hands_w += CARD_W;
+
+    if(h < game->total_player_hands - 1)
+    {
+      hands_w += hand_space;
     }
   }
 
-  printf(" ⇒  %u", dealer_get_value(dealer_hand, Soft));
-}
+  x_offset = (SCREEN_W / 2) - (hands_w / 2);
+  x = x_offset;
 
-void draw_player_hand(const struct Game *game, unsigned index)
-{
-  const struct PlayerHand *player_hand = &game->player_hands[index];
-  const struct Card *card;
-
-  printf(" ");
-
-  unsigned x_offset = (SCREEN_W / 2) - ((((player_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
-
-  for(unsigned i = 0; i < player_hand->hand.num_cards; ++i)
+  for(h = 0; h < game->total_player_hands; h++)
   {
-    card = &player_hand->hand.cards[i];
-    printf("%s ", game->card_faces[card->value][card->suit]);
-    draw_card(game->renderer, game->cards_texture, card->value, card->suit, x_offset + (i * CARD_DRAW_SPACING), PLAYER_HANDS_Y_OFFSET);
-  }
+    player_hand = &game->player_hands[h];
 
-  printf(" ⇒  %u  ", player_get_value(player_hand, Soft));
+    for(c = 0; c < player_hand->hand.num_cards; c++)
+    {
+      card = &player_hand->hand.cards[c];
+      draw_card(game, card, x, PLAYER_HANDS_Y_OFFSET);
 
-  if(player_hand->status == Lost)
-  {
-    printf("-");
-  }
-  else if(player_hand->status == Won)
-  {
-    printf("+");
-  }
+      if(c < player_hand->hand.num_cards - 1)
+      {
+	x += card_space;
+      }
+      else if(c == player_hand->hand.num_cards - 1)
+      {
+	x += CARD_W;
+      }
+    }
 
-  printf("$%.2f", (double)(player_hand->bet / 100.0));
-
-  if(!player_hand->played && index == game->current_player_hand)
-  {
-    printf(" ⇐");
-  }
-
-  printf("  ");
-
-  if(player_hand->status == Lost)
-  {
-    printf(player_is_busted(player_hand) ? "Busted!" : "Lose!");
-  }
-  else if(player_hand->status == Won)
-  {
-    printf(is_blackjack(&player_hand->hand) ? "Blackjack!" : "Won!");
-  }
-  else if(player_hand->status == Push)
-  {
-    printf("Push");
-  }
-  
-  printf("\n\n");
+    if(h < game->total_player_hands - 1)
+    {
+      x += hand_space;
+    }
+  }  
 }
 
 void draw_hands(const struct Game *game)
 {
-  //clear();
-  printf("\n Dealer: \n");
   draw_dealer_hand(game);
-  printf("\n\n Player $%.2f:\n", (double)(game->money / 100.0));
-
-  for(unsigned x = 0; x < game->total_player_hands; x++)
-  {
-    draw_player_hand(game, x);
-  }
+  draw_player_hands(game);
 }
 
 bool need_to_shuffle(const struct Game *game)
@@ -886,8 +877,6 @@ void insure_hand(struct Game *game)
   player_hand->status = Lost;
   game->money -= player_hand->bet;
   
-  draw_hands(game);
-  //bet_options(game);
   game->current_menu = MenuGame;
 }
 
@@ -902,8 +891,6 @@ void no_insurance(struct Game *game)
     dealer_hand->played = true;
 
     pay_hands(game);
-    draw_hands(game);
-    //bet_options(game);
     game->current_menu = MenuGame;
     return;
   }
@@ -913,14 +900,10 @@ void no_insurance(struct Game *game)
   if(player_is_done(game, player_hand))
   {
     play_dealer_hand(game);
-    draw_hands(game);
-    //bet_options(game);
     game->current_menu = MenuGame;
     return;
   }
   
-  draw_hands(game);
-  //player_get_action(game);
   game->current_menu = MenuHand;
 }
 
@@ -946,8 +929,6 @@ void ask_insurance(struct Game *game)
       break;
     default:
       br = true;
-      //clear();
-      draw_hands(game);
       ask_insurance(game);
       break;
     }
@@ -981,8 +962,9 @@ void deal_new_hand(struct Game *game)
   
   if(dealer_upcard_is_ace(dealer_hand) && !is_blackjack(&player_hand.hand))
   {
-    draw_hands(game);
+    // TODO
     //ask_insurance(game);
+    game->current_menu = MenuHand;
     return;
   }
 
@@ -990,22 +972,17 @@ void deal_new_hand(struct Game *game)
   {
     dealer_hand->hide_down_card = false;    
     pay_hands(game);
-    draw_hands(game);
-    //bet_options(game);
+    game->current_menu = MenuGame;
     return;
   }
 
-  draw_hands(game);
-  //player_get_action(game);
+  game->current_menu = MenuHand;
   save_game(game);
 }
 
 void get_new_bet(struct Game *game)
 {
   unsigned tmp;
-
-  //clear();
-  draw_hands(game);
 
   printf("  Current Bet: $%u  Enter New Bet: $", (game->current_bet / 100));
 
@@ -1022,9 +999,6 @@ void get_new_bet(struct Game *game)
 void get_new_num_decks(struct Game *game)
 {
   unsigned tmp;
-
-  //clear();
-  draw_hands(game);
 
   printf("  Number Of Decks: %u  Enter New Number Of Decks (1-8): ", (game->num_decks));
 
@@ -1045,8 +1019,6 @@ void get_new_deck_type(struct Game *game)
   bool br = false;
   char c = { 0 };
 
-  //clear();
-  draw_hands(game);
   printf(" (1) Regular  (2) Aces  (3) Jacks  (4) Aces & Jacks  (5) Sevens  (6) Eights\n");
 
   while(true)
@@ -1081,15 +1053,11 @@ void get_new_deck_type(struct Game *game)
       break;
     default:
       br = true;
-      //clear();
-      draw_hands(game);
       game_options(game);
     }
 
     if(br)
     {
-      draw_hands(game);
-      //bet_options(game);
       game->current_menu = MenuGame;
       break;
     }
@@ -1101,8 +1069,6 @@ void game_options(struct Game *game)
   bool br = false;
   char c = { 0 };
 
-  //clear();
-  draw_hands(game);
   printf(" (N) Number of Decks  (T) Deck Type  (B) Back\n");
 
   while(true)
@@ -1121,63 +1087,16 @@ void game_options(struct Game *game)
       break;
     case 'b':
       br = true;
-      //clear();
-      draw_hands(game);
-      //bet_options(game);
       game->current_menu = MenuGame;
       break;
     default:
       br = true;
-      //clear();
-      draw_hands(game);
       game_options(game);
     }
 
     if(br) break;
   }
 }
-
-/*
-void bet_options(struct Game *game)
-{
-  bool br = false;
-  char c = { 0 };
-
-  printf(" (D) Deal Hand  (B) Change Bet  (O) Options  (Q) Quit\n");
-
-  while(true)
-  {
-    c = (char)getchar();
-
-    switch(c)
-    {
-    case 'd':
-      br = true;
-      deal_new_hand(game);
-      break;
-    case 'b':
-      br = true;
-      get_new_bet(game);
-      break;
-    case 'o':
-      br = true;
-      game_options(game);
-      break;
-    case 'q':
-      //clear();
-      br = true;
-      break;
-    default:
-      br = true;
-      //clear();
-      draw_hands(game);
-      bet_options(game);
-    }
-
-    if(br) break;
-  }
-}
-*/
 
 void process(struct Game *game)
 {
@@ -1188,8 +1107,6 @@ void process(struct Game *game)
   }
 
   play_dealer_hand(game);
-  draw_hands(game);
-  //bet_options(game);
   game->current_menu = MenuGame;
 }
 
@@ -1204,8 +1121,6 @@ void play_more_hands(struct Game *game)
     return;
   }
 
-  draw_hands(game);
-  //player_get_action(game);
   game->current_menu = MenuHand;
 }
 
@@ -1223,9 +1138,6 @@ void player_hit(struct Game *game)
     process(game);
     return;
   }
-  
-  draw_hands(game);
-  //player_get_action(game);
 }
 
 void player_stand(struct Game *game)
@@ -1242,8 +1154,6 @@ void player_stand(struct Game *game)
   }
 
   play_dealer_hand(game);
-  draw_hands(game);
-  //bet_options(game);
   game->current_menu = MenuGame;
 }
 
@@ -1257,8 +1167,6 @@ void player_split(struct Game *game)
 
   if(!player_can_split(game))
   {
-    draw_hands(game);
-    //player_get_action(game);
     game->current_menu = MenuHand;
     return;
   }
@@ -1286,8 +1194,6 @@ void player_split(struct Game *game)
     return;
   }
 
-  draw_hands(game);
-  //player_get_action(game);
   game->current_menu = MenuHand;
 }
 
@@ -1309,56 +1215,6 @@ const char *card_to_string(const struct Game *game, const struct Card *card)
 {
   return game->card_faces[card->value][card->suit];
 }
-
-/*
-void player_get_action(struct Game *game)
-{
-  struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
-  bool br = false;
-  char c = { 0 };
-
-  printf(" ");
-
-  if(player_can_hit(player_hand))   printf("(H) Hit  ");
-  if(player_can_stand(player_hand)) printf("(S) Stand  ");
-  if(player_can_split(game))        printf("(P) Split  ");
-  if(player_can_dbl(game))          printf("(D) Double  ");
-
-  printf("\n");
-
-  while(true)
-  {
-    c = (char)getchar();
-
-    switch(c)
-    {
-    case 'h':
-      br = true;
-      player_hit(game);
-      break;
-    case 's':
-      br = true;
-      player_stand(game);
-      break;
-    case 'p':
-      br = true;
-      player_split(game);
-      break;
-    case 'd':
-      br = true;
-      player_dbl(game);
-      break;
-    default:
-      br = true;
-      //clear();
-      draw_hands(game);
-      player_get_action(game);
-    }
-
-    if(br) break;
-  }
-}
-*/
 
 void new_regular(struct Game *game)
 {
