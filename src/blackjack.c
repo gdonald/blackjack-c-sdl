@@ -51,58 +51,81 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+bool inside_rect(SDL_Rect rect, int x, int y)
+{
+  return x > rect.x &&
+         x < rect.x + rect.w &&
+         y > rect.y &&
+         y < rect.y + rect.h;
+}
+
 void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, int mouse_y)
 {
   if(button->button == SDL_BUTTON_LEFT)
   {
-    // BtnHit
-    if(mouse_x > game->hand_rects[BtnHit].x &&
-       mouse_x < game->hand_rects[BtnHit].x + game->hand_rects[BtnHit].w &&
-       mouse_y > game->hand_rects[BtnHit].y &&
-       mouse_y < game->hand_rects[BtnHit].y + game->hand_rects[BtnHit].h)
+    if(game->current_menu == MenuHand)
     {
-      player_hit(game);
-      return;
-    }
+      if(inside_rect(game->btn_rects[BtnHit], mouse_x, mouse_y))
+      {
+	player_hit(game);
+	return;
+      }
 
-    if(mouse_x > game->hand_rects[BtnStand].x &&
-       mouse_x < game->hand_rects[BtnStand].x + game->hand_rects[BtnStand].w &&
-       mouse_y > game->hand_rects[BtnStand].y &&
-       mouse_y < game->hand_rects[BtnStand].y + game->hand_rects[BtnStand].h)
-    {
-      player_stand(game);
-      return;
+      if(inside_rect(game->btn_rects[BtnStand], mouse_x, mouse_y))
+      {
+	player_stand(game);
+	return;
+      }
+      
+      if(inside_rect(game->btn_rects[BtnDbl], mouse_x, mouse_y))
+      {
+	player_dbl(game);
+	return;
+      }
+      
+      if(inside_rect(game->btn_rects[BtnSplit], mouse_x, mouse_y))
+      {
+	player_split(game);
+	return;
+      }
     }
-
-    if(mouse_x > game->hand_rects[BtnDouble].x &&
-       mouse_x < game->hand_rects[BtnDouble].x + game->hand_rects[BtnDouble].w &&
-       mouse_y > game->hand_rects[BtnDouble].y &&
-       mouse_y < game->hand_rects[BtnDouble].y + game->hand_rects[BtnDouble].h)
+    else if(game->current_menu == MenuGame)
     {
-      player_dbl(game);
-      return;
-    }
+      if(inside_rect(game->btn_rects[BtnDeal], mouse_x, mouse_y))
+      {
+	deal_new_hand(game);	
+	return;
+      }
 
-    if(mouse_x > game->hand_rects[BtnSplit].x &&
-       mouse_x < game->hand_rects[BtnSplit].x + game->hand_rects[BtnSplit].w &&
-       mouse_y > game->hand_rects[BtnSplit].y &&
-       mouse_y < game->hand_rects[BtnSplit].y + game->hand_rects[BtnSplit].h)
-    {
-      player_split(game);
-      return;
+      if(inside_rect(game->btn_rects[BtnBet], mouse_x, mouse_y))
+      {
+	get_new_bet(game);	
+	return;
+      }
+
+      if(inside_rect(game->btn_rects[BtnOptions], mouse_x, mouse_y))
+      {
+	game_options(game);	
+	return;
+      }
+
+      if(inside_rect(game->btn_rects[BtnQuit], mouse_x, mouse_y))
+      {
+	exit(EXIT_SUCCESS);
+      }
     }
   }
 }
 
-void draw_hand_btns(struct Game *game)
+void draw_hand_menu(struct Game *game)
 {
   struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
 
-  SDL_Rect clip[4];
-  clip[BtnDouble].x = 0;
-  clip[BtnDouble].y = player_can_dbl(game) ? BtnUp : BtnOff;
-  clip[BtnDouble].w = BTN_W;
-  clip[BtnDouble].h = BTN_H;
+  SDL_Rect clip[8];
+  clip[BtnDbl].x = 0;
+  clip[BtnDbl].y = player_can_dbl(game) ? BtnUp : BtnOff;
+  clip[BtnDbl].w = BTN_W;
+  clip[BtnDbl].h = BTN_H;
 
   clip[BtnHit].x = 0;
   clip[BtnHit].y = player_can_hit(player_hand) ? BtnUp : BtnOff;
@@ -119,72 +142,161 @@ void draw_hand_btns(struct Game *game)
   clip[BtnSplit].w = BTN_W;
   clip[BtnSplit].h = BTN_H;
 
-  game->hand_rects[BtnDouble].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
-  game->hand_rects[BtnDouble].y = BUTTONS_Y_OFFSET;
-  game->hand_rects[BtnDouble].w = BTN_W;
-  game->hand_rects[BtnDouble].h = BTN_H;
+  game->btn_rects[BtnDbl].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDbl].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnDbl].w = BTN_W;
+  game->btn_rects[BtnDbl].h = BTN_H;
 
-  game->hand_rects[BtnHit].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
-  game->hand_rects[BtnHit].y = BUTTONS_Y_OFFSET;
-  game->hand_rects[BtnHit].w = BTN_W;
-  game->hand_rects[BtnHit].h = BTN_H;
+  game->btn_rects[BtnHit].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnHit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnHit].w = BTN_W;
+  game->btn_rects[BtnHit].h = BTN_H;
 
-  game->hand_rects[BtnStand].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
-  game->hand_rects[BtnStand].y = BUTTONS_Y_OFFSET;
-  game->hand_rects[BtnStand].w = BTN_W;
-  game->hand_rects[BtnStand].h = BTN_H;
+  game->btn_rects[BtnStand].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnStand].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnStand].w = BTN_W;
+  game->btn_rects[BtnStand].h = BTN_H;
 
-  game->hand_rects[BtnSplit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
-  game->hand_rects[BtnSplit].y = BUTTONS_Y_OFFSET;
-  game->hand_rects[BtnSplit].w = BTN_W;
-  game->hand_rects[BtnSplit].h = BTN_H;
+  game->btn_rects[BtnSplit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
+  game->btn_rects[BtnSplit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnSplit].w = BTN_W;
+  game->btn_rects[BtnSplit].h = BTN_H;
   
-  SDL_RenderCopy(game->renderer, game->btn_textures[BtnDouble], &clip[BtnDouble], &game->hand_rects[BtnDouble]);
-  SDL_RenderCopy(game->renderer, game->btn_textures[BtnHit],    &clip[BtnHit],    &game->hand_rects[BtnHit]);
-  SDL_RenderCopy(game->renderer, game->btn_textures[BtnStand],  &clip[BtnStand],  &game->hand_rects[BtnStand]);
-  SDL_RenderCopy(game->renderer, game->btn_textures[BtnSplit],  &clip[BtnSplit],  &game->hand_rects[BtnSplit]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnDbl],   &clip[BtnDbl],   &game->btn_rects[BtnDbl]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnHit],   &clip[BtnHit],   &game->btn_rects[BtnHit]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnStand], &clip[BtnStand], &game->btn_rects[BtnStand]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnSplit], &clip[BtnSplit], &game->btn_rects[BtnSplit]);
+
+  game->current_menu = MenuHand;
+}
+
+void draw_game_menu(struct Game *game)
+{
+  SDL_Rect clip[8];
+  clip[BtnDeal].x = 0;
+  clip[BtnDeal].y = BtnUp;
+  clip[BtnDeal].w = BTN_W;
+  clip[BtnDeal].h = BTN_H;
+
+  clip[BtnBet].x = 0;
+  clip[BtnBet].y = BtnUp;
+  clip[BtnBet].w = BTN_W;
+  clip[BtnBet].h = BTN_H;
+
+  clip[BtnOptions].x = 0;
+  clip[BtnOptions].y = BtnUp;
+  clip[BtnOptions].w = BTN_W;
+  clip[BtnOptions].h = BTN_H;
+
+  clip[BtnQuit].x = 0;
+  clip[BtnQuit].y = BtnUp;
+  clip[BtnQuit].w = BTN_W;
+  clip[BtnQuit].h = BTN_H;
+
+  game->btn_rects[BtnDeal].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDeal].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnDeal].w = BTN_W;
+  game->btn_rects[BtnDeal].h = BTN_H;
+
+  game->btn_rects[BtnBet].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnBet].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnBet].w = BTN_W;
+  game->btn_rects[BtnBet].h = BTN_H;
+
+  game->btn_rects[BtnOptions].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnOptions].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnOptions].w = BTN_W;
+  game->btn_rects[BtnOptions].h = BTN_H;
+
+  game->btn_rects[BtnQuit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
+  game->btn_rects[BtnQuit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnQuit].w = BTN_W;
+  game->btn_rects[BtnQuit].h = BTN_H;
+
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnDeal],    &clip[BtnDeal],    &game->btn_rects[BtnDeal]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnBet],     &clip[BtnBet],     &game->btn_rects[BtnBet]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnOptions], &clip[BtnOptions], &game->btn_rects[BtnOptions]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnQuit],    &clip[BtnQuit],    &game->btn_rects[BtnQuit]);
+
+  game->current_menu = MenuGame;
 }
 
 void load_btn_textures(struct Game *game, SDL_Renderer *renderer)
 {
-  SDL_Surface *btn_hit_surface    = SDL_LoadBMP("img/btn_hit.bmp");
-  SDL_Surface *btn_split_surface  = SDL_LoadBMP("img/btn_split.bmp");
-  SDL_Surface *btn_stand_surface  = SDL_LoadBMP("img/btn_stand.bmp");
-  SDL_Surface *btn_double_surface = SDL_LoadBMP("img/btn_double.bmp");
+  SDL_Surface *btn_hit_surface     = SDL_LoadBMP("img/btn_hit.bmp");
+  SDL_Surface *btn_split_surface   = SDL_LoadBMP("img/btn_split.bmp");
+  SDL_Surface *btn_stand_surface   = SDL_LoadBMP("img/btn_stand.bmp");
+  SDL_Surface *btn_dbl_surface     = SDL_LoadBMP("img/btn_dbl.bmp");
+  SDL_Surface *btn_deal_surface    = SDL_LoadBMP("img/btn_deal.bmp");
+  SDL_Surface *btn_bet_surface     = SDL_LoadBMP("img/btn_bet.bmp");
+  SDL_Surface *btn_options_surface = SDL_LoadBMP("img/btn_options.bmp");
+  SDL_Surface *btn_quit_surface    = SDL_LoadBMP("img/btn_quit.bmp");
 
   if(btn_hit_surface == NULL)
   {
-    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp", SDL_GetError());
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
   if(btn_split_surface == NULL)
   {
-    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp", SDL_GetError());
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
   if(btn_stand_surface == NULL)
   {
-    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp", SDL_GetError());
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
-  if(btn_double_surface == NULL)
+  if(btn_dbl_surface == NULL)
   {
-    printf( "Unable to load image %s! SDL Error: %s\n", "img/btn_double.bmp", SDL_GetError());
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_dbl.bmp", SDL_GetError());
     exit(EXIT_FAILURE);
   }
-  
-  game->btn_textures[BtnHit]    = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
-  game->btn_textures[BtnSplit]  = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
-  game->btn_textures[BtnStand]  = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
-  game->btn_textures[BtnDouble] = SDL_CreateTextureFromSurface(renderer, btn_double_surface);
-  
+
+  if(btn_deal_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_deal.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if(btn_bet_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_bet.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if(btn_options_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_options.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if(btn_quit_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_quit.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game->btn_textures[BtnHit]     = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
+  game->btn_textures[BtnSplit]   = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
+  game->btn_textures[BtnStand]   = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
+  game->btn_textures[BtnDbl]     = SDL_CreateTextureFromSurface(renderer, btn_dbl_surface);
+  game->btn_textures[BtnDeal]    = SDL_CreateTextureFromSurface(renderer, btn_deal_surface);
+  game->btn_textures[BtnBet]     = SDL_CreateTextureFromSurface(renderer, btn_bet_surface);
+  game->btn_textures[BtnOptions] = SDL_CreateTextureFromSurface(renderer, btn_options_surface);
+  game->btn_textures[BtnQuit]    = SDL_CreateTextureFromSurface(renderer, btn_quit_surface);
+
   SDL_FreeSurface(btn_hit_surface);
   SDL_FreeSurface(btn_stand_surface);
-  SDL_FreeSurface(btn_double_surface);
+  SDL_FreeSurface(btn_dbl_surface);
   SDL_FreeSurface(btn_split_surface);
+  SDL_FreeSurface(btn_deal_surface);
+  SDL_FreeSurface(btn_bet_surface);
+  SDL_FreeSurface(btn_options_surface);
+  SDL_FreeSurface(btn_quit_surface);
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
@@ -775,7 +887,8 @@ void insure_hand(struct Game *game)
   game->money -= player_hand->bet;
   
   draw_hands(game);
-  bet_options(game);
+  //bet_options(game);
+  game->current_menu = MenuGame;
 }
 
 void no_insurance(struct Game *game)
@@ -790,7 +903,8 @@ void no_insurance(struct Game *game)
 
     pay_hands(game);
     draw_hands(game);
-    bet_options(game);
+    //bet_options(game);
+    game->current_menu = MenuGame;
     return;
   }
   
@@ -800,12 +914,14 @@ void no_insurance(struct Game *game)
   {
     play_dealer_hand(game);
     draw_hands(game);
-    bet_options(game);
+    //bet_options(game);
+    game->current_menu = MenuGame;
     return;
   }
   
   draw_hands(game);
-  player_get_action(game);
+  //player_get_action(game);
+  game->current_menu = MenuHand;
 }
 
 void ask_insurance(struct Game *game)
@@ -973,7 +1089,8 @@ void get_new_deck_type(struct Game *game)
     if(br)
     {
       draw_hands(game);
-      bet_options(game);
+      //bet_options(game);
+      game->current_menu = MenuGame;
       break;
     }
   }
@@ -1006,7 +1123,8 @@ void game_options(struct Game *game)
       br = true;
       //clear();
       draw_hands(game);
-      bet_options(game);
+      //bet_options(game);
+      game->current_menu = MenuGame;
       break;
     default:
       br = true;
@@ -1019,6 +1137,7 @@ void game_options(struct Game *game)
   }
 }
 
+/*
 void bet_options(struct Game *game)
 {
   bool br = false;
@@ -1058,6 +1177,7 @@ void bet_options(struct Game *game)
     if(br) break;
   }
 }
+*/
 
 void process(struct Game *game)
 {
@@ -1070,6 +1190,7 @@ void process(struct Game *game)
   play_dealer_hand(game);
   draw_hands(game);
   //bet_options(game);
+  game->current_menu = MenuGame;
 }
 
 void play_more_hands(struct Game *game)
@@ -1084,7 +1205,8 @@ void play_more_hands(struct Game *game)
   }
 
   draw_hands(game);
-  player_get_action(game);
+  //player_get_action(game);
+  game->current_menu = MenuHand;
 }
 
 void player_hit(struct Game *game)
@@ -1121,7 +1243,8 @@ void player_stand(struct Game *game)
 
   play_dealer_hand(game);
   draw_hands(game);
-  bet_options(game);
+  //bet_options(game);
+  game->current_menu = MenuGame;
 }
 
 void player_split(struct Game *game)
@@ -1135,7 +1258,8 @@ void player_split(struct Game *game)
   if(!player_can_split(game))
   {
     draw_hands(game);
-    player_get_action(game);
+    //player_get_action(game);
+    game->current_menu = MenuHand;
     return;
   }
 
@@ -1163,7 +1287,8 @@ void player_split(struct Game *game)
   }
 
   draw_hands(game);
-  player_get_action(game);
+  //player_get_action(game);
+  game->current_menu = MenuHand;
 }
 
 void player_dbl(struct Game *game)
@@ -1185,6 +1310,7 @@ const char *card_to_string(const struct Game *game, const struct Card *card)
   return game->card_faces[card->value][card->suit];
 }
 
+/*
 void player_get_action(struct Game *game)
 {
   struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
@@ -1232,6 +1358,7 @@ void player_get_action(struct Game *game)
     if(br) break;
   }
 }
+*/
 
 void new_regular(struct Game *game)
 {

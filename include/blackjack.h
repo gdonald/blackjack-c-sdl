@@ -45,8 +45,10 @@ extern struct argp_option options[];
 
 enum CountMethod { Soft, Hard };
 enum HandStatus { Won=1, Lost, Push };
-enum HandButtons { BtnDouble, BtnHit, BtnStand, BtnSplit };
+enum Buttons { BtnDbl, BtnHit, BtnStand, BtnSplit,
+	       BtnDeal, BtnBet, BtnOptions, BtnQuit };
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
+enum Menus { MenuGame, MenuHand };
 
 extern const unsigned shuffle_specs[8][2];
 extern const char *const card_faces[14][4];
@@ -108,8 +110,9 @@ struct Game
   const char *const (*card_faces)[4];
   SDL_Renderer *renderer;
   SDL_Texture *cards_texture;
-  SDL_Texture *btn_textures[4];
-  SDL_Rect hand_rects[4];
+  SDL_Texture *btn_textures[8];
+  SDL_Rect btn_rects[8];
+  unsigned current_menu;
 };
 
 error_t parse_opt(int key, char *arg, struct argp_state *state);
@@ -121,6 +124,7 @@ SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
 SDL_Renderer *create_renderer(SDL_Window *window);
 SDL_Window *create_window(void);
 
+bool inside_rect(SDL_Rect rect, int x, int y);
 bool is_ace(const struct Card *card);
 bool is_ten(const struct Card *card);
 bool player_is_busted(const struct PlayerHand *player_hand);
@@ -142,7 +146,8 @@ unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
 void draw_card(SDL_Renderer *renderer, SDL_Texture *cards_texture, const unsigned col, const unsigned row, const unsigned pos_x, const unsigned pos_y);
-void draw_hand_btns(struct Game *game);
+void draw_hand_menu(struct Game *game);
+void draw_game_menu(struct Game *game);
 void load_btn_textures(struct Game *game, SDL_Renderer *renderer);
 
 void normalize_bet(struct Game *game);
@@ -161,7 +166,7 @@ void no_insurance(struct Game *game);
 void ask_insurance(struct Game *game);
 void deal_new_hand(struct Game *game);
 void get_new_bet(struct Game *game);
-void bet_options(struct Game *game);
+//void bet_options(struct Game *game);
 void game_options(struct Game *game);
 void get_new_num_decks(struct Game *game);
 void get_new_deck_type(struct Game *game);
@@ -171,7 +176,7 @@ void player_hit(struct Game *game);
 void player_stand(struct Game *game);
 void player_split(struct Game *game);
 void player_dbl(struct Game *game);
-void player_get_action(struct Game *game);
+//void player_get_action(struct Game *game);
 void new_regular(struct Game *game);
 void new_aces(struct Game *game);
 void new_aces_jacks(struct Game *game);

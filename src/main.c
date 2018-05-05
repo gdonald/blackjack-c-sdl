@@ -25,7 +25,9 @@ int main(int argc, char *argv[])
 		       .card_faces = card_faces,
 		       .num_players = arguments.players,
 		       .renderer = renderer,
-		       .cards_texture = cards_texture };
+		       .cards_texture = cards_texture,
+		       .current_menu = MenuHand
+  };
 
   load_btn_textures(&game, renderer);
   
@@ -39,7 +41,16 @@ int main(int argc, char *argv[])
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 
     draw_hands(&game);
-    draw_hand_btns(&game);
+
+    switch(game.current_menu)
+    {
+    case MenuHand:
+      draw_hand_menu(&game);
+      break;
+    case MenuGame:
+      draw_game_menu(&game);
+      break;
+    }
     
     SDL_RenderPresent(renderer);
 
