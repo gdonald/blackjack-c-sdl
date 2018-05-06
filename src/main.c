@@ -19,6 +19,19 @@ int main(int argc, char *argv[])
   SDL_Texture *rules_texture = load_rules_texture(renderer);
   SDL_Texture *cards_texture = load_cards_texture(renderer);
 
+  if(TTF_Init() == -1)
+  {
+    printf("TTF_Init failed: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+  
+  TTF_Font *font = TTF_OpenFont("font/LiberationSerif-Bold.ttf", 21);
+  if(font == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
   struct Game game = { .num_decks = 8,
 		       .money = 10000,
 		       .current_bet = 500,
@@ -27,7 +40,8 @@ int main(int argc, char *argv[])
 		       .num_players = arguments.players,
 		       .renderer = renderer,
 		       .cards_texture = cards_texture,
-		       .current_menu = MenuHand
+		       .current_menu = MenuHand,
+		       .font = font
   };
 
   load_btn_textures(&game, renderer);
@@ -54,6 +68,8 @@ int main(int argc, char *argv[])
       draw_game_menu(&game);
       break;
     }
+
+    write_text(&game, "foo!", 5, 5);
     
     SDL_RenderPresent(renderer);
 

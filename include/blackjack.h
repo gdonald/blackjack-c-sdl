@@ -11,6 +11,7 @@
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL2_gfxPrimitives.h"
+#include "SDL2/SDL_ttf.h"
 
 #define CARDS_PER_DECK 52
 #define MAX_CARDS_PER_HAND 11
@@ -114,6 +115,7 @@ struct Game
   SDL_Texture *btn_textures[8];
   SDL_Rect btn_rects[8];
   unsigned current_menu;
+  TTF_Font *font;
 };
 
 error_t parse_opt(int key, char *arg, struct argp_state *state);
@@ -147,6 +149,7 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
+void write_text(struct Game *game, const char *text, const int x, const int y);
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);

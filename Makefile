@@ -2,7 +2,7 @@
 CC = clang
 #CC_FLAGS = -std=c11 -O2 -Iinclude -I/usr/include
 CC_FLAGS = -Weverything -Wno-padded -std=c11 -O0 -g -Iinclude -I/usr/include
-LD_FLAGS = -lSDL2 -lSDL2_gfx
+LD_FLAGS = -lSDL2 -lSDL2_gfx -lSDL2_ttf
 
 #CC = gcc
 #CC_FLAGS = -Wall -Wextra -std=c11 -O0 -g -Iinclude  -I/usr/include

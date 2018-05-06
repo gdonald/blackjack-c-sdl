@@ -51,6 +51,20 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+void write_text(struct Game *game, const char *text, const int x, const int y)
+{
+  SDL_Color color = { 255, 255, 255, 0 };
+  int w, h;
+
+  SDL_Surface* surface = TTF_RenderText_Blended(game->font, text, color);
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(game->renderer, surface);
+
+  TTF_SizeText(game->font, text, &w, &h);
+  SDL_Rect rect = { .x = x, .y = y, .w = w, .h = h };
+
+  SDL_RenderCopy(game->renderer, texture, NULL, &rect);
+}
+
 bool inside_rect(SDL_Rect rect, int x, int y)
 {
   return x > rect.x &&
