@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
   
   load_game(&game);
   //new_regular(&game);
-  new_aces(&game);
+  //new_aces(&game);
+  new_eights(&game);
   deal_new_hand(&game);
   
   while(!quit)
@@ -69,8 +70,9 @@ int main(int argc, char *argv[])
       break;
     }
 
-    write_text(&game, "foo!", 5, 5);
-    
+    draw_money(&game);
+    draw_bet(&game);
+
     SDL_RenderPresent(renderer);
 
     while(SDL_PollEvent(&event) != 0)

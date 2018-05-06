@@ -149,7 +149,9 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
-void write_text(struct Game *game, const char *text, const int x, const int y);
+void draw_bet(const struct Game *game);
+void draw_money(const struct Game *game);
+void write_text(const struct Game *game, const char *text, const int x, const int y);
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);

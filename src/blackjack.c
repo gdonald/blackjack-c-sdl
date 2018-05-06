@@ -51,7 +51,21 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
   return 0;
 }
 
-void write_text(struct Game *game, const char *text, const int x, const int y)
+void draw_money(const struct Game *game)
+{
+  char str[32];
+  sprintf(str, "Money: $%.2f", (double)(game->money / 100));
+  write_text(game, str, 7, 5);
+}
+
+void draw_bet(const struct Game *game)
+{
+  char str[32];
+  sprintf(str, "Current Bet: $%.2f", (double)(game->current_bet / 100));
+  write_text(game, str, 7, 28);
+}
+
+void write_text(const struct Game *game, const char *text, const int x, const int y)
 {
   SDL_Color color = { 255, 255, 255, 0 };
   int w, h;
