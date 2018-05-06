@@ -24,13 +24,13 @@
 #define SCREEN_W  1024
 #define SCREEN_H  768
 
-#define DEALER_HAND_Y_OFFSET 80
-#define PLAYER_HANDS_Y_OFFSET 450
-#define BUTTONS_Y_OFFSET 640
+#define DEALER_HAND_Y_OFFSET 65
+#define PLAYER_HANDS_Y_OFFSET 440
+#define BUTTONS_Y_OFFSET 670
 
 #define CARD_BMAP_SPACING 1
 #define CARD_DRAW_SPACING 19
-#define HAND_DRAW_SPACING 19
+#define HAND_DRAW_SPACING 20
 
 #define CARD_W 119
 #define CARD_H 166
@@ -38,6 +38,8 @@
 #define BTN_W 120
 #define BTN_H 40
 #define BTN_SPACE 20
+
+#define FONT "font/LiberationSerif-Bold.ttf"
 
 extern const char *argp_program_version;
 extern const char *argp_program_bug_address;
@@ -51,6 +53,7 @@ enum Buttons { BtnDbl, BtnHit, BtnStand, BtnSplit,
 	       BtnDeal, BtnBet, BtnOptions, BtnQuit };
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
 enum Menus { MenuGame, MenuHand };
+enum FontSizes { FontSm, FontMd, FontLg };
 
 extern const unsigned shuffle_specs[8][2];
 extern const char *const card_faces[14][4];
@@ -115,7 +118,7 @@ struct Game
   SDL_Texture *btn_textures[8];
   SDL_Rect btn_rects[8];
   unsigned current_menu;
-  TTF_Font *font;
+  TTF_Font *fonts[3];
 };
 
 error_t parse_opt(int key, char *arg, struct argp_state *state);
@@ -151,7 +154,7 @@ unsigned myrand(unsigned min, unsigned max);
 
 void draw_bet(const struct Game *game);
 void draw_money(const struct Game *game);
-void write_text(const struct Game *game, const char *text, const int x, const int y);
+void write_text(const struct Game *game, const char *text, const int font_size, const int x, const int y);
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
@@ -165,7 +168,6 @@ void deal_card(struct Shoe *shoe, struct Hand *hand);
 void play_dealer_hand(struct Game *game);
 void draw_dealer_hand(const struct Game *game);
 void draw_player_hands(const struct Game *game);
-void draw_hands(const struct Game *game);
 void swap(struct Card *a, struct Card *b);
 void shuffle(struct Shoe *shoe);
 void insure_hand(struct Game *game);

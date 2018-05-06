@@ -25,13 +25,6 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
   
-  TTF_Font *font = TTF_OpenFont("font/LiberationSerif-Bold.ttf", 21);
-  if(font == NULL)
-  {
-    printf("Failed to load font! Error: %s\n", TTF_GetError());
-    exit(EXIT_FAILURE);
-  }
-
   struct Game game = { .num_decks = 8,
 		       .money = 10000,
 		       .current_bet = 500,
@@ -40,16 +33,36 @@ int main(int argc, char *argv[])
 		       .num_players = arguments.players,
 		       .renderer = renderer,
 		       .cards_texture = cards_texture,
-		       .current_menu = MenuHand,
-		       .font = font
+		       .current_menu = MenuHand
   };
 
   load_btn_textures(&game, renderer);
-  
+
+  game.fonts[FontSm] = TTF_OpenFont(FONT, 15);
+  if(game.fonts[FontSm] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game.fonts[FontMd] = TTF_OpenFont(FONT, 18);
+  if(game.fonts[FontMd] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game.fonts[FontLg] = TTF_OpenFont(FONT, 21);
+  if(game.fonts[FontLg] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
   load_game(&game);
-  //new_regular(&game);
+  new_regular(&game);
   //new_aces(&game);
-  new_eights(&game);
+  //new_eights(&game);
   deal_new_hand(&game);
   
   while(!quit)
@@ -58,7 +71,8 @@ int main(int argc, char *argv[])
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
     SDL_RenderCopy(renderer, rules_texture, NULL, NULL);
 
-    draw_hands(&game);
+    draw_dealer_hand(&game);
+    draw_player_hands(&game);
 
     switch(game.current_menu)
     {

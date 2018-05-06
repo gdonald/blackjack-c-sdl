@@ -55,25 +55,25 @@ void draw_money(const struct Game *game)
 {
   char str[32];
   sprintf(str, "Money: $%.2f", (double)(game->money / 100));
-  write_text(game, str, 7, 5);
+  write_text(game, str, FontLg, 7, 5);
 }
 
 void draw_bet(const struct Game *game)
 {
   char str[32];
   sprintf(str, "Current Bet: $%.2f", (double)(game->current_bet / 100));
-  write_text(game, str, 7, 28);
+  write_text(game, str, FontLg, 7, 28);
 }
 
-void write_text(const struct Game *game, const char *text, const int x, const int y)
+void write_text(const struct Game *game, const char *text, const int font_size, const int x, const int y)
 {
   SDL_Color color = { 255, 255, 255, 0 };
   int w, h;
 
-  SDL_Surface* surface = TTF_RenderText_Blended(game->font, text, color);
+  SDL_Surface* surface = TTF_RenderText_Blended(game->fonts[font_size], text, color);
   SDL_Texture* texture = SDL_CreateTextureFromSurface(game->renderer, surface);
 
-  TTF_SizeText(game->font, text, &w, &h);
+  TTF_SizeText(game->fonts[font_size], text, &w, &h);
   SDL_Rect rect = { .x = x, .y = y, .w = w, .h = h };
 
   SDL_RenderCopy(game->renderer, texture, NULL, &rect);
@@ -806,8 +806,7 @@ void draw_dealer_hand(const struct Game *game)
 void draw_player_hands(const struct Game *game)
 {
   unsigned x_offset, x, h, c, hands_w = 0;
-  unsigned hand_space = HAND_DRAW_SPACING - game->total_player_hands;
-  unsigned card_space = CARD_DRAW_SPACING - game->total_player_hands;
+  char str[32], plus_minus[1], current[2];
 
   const struct PlayerHand *player_hand;
   const struct Card *card;
@@ -818,14 +817,14 @@ void draw_player_hands(const struct Game *game)
 
     for(c = 0; c < player_hand->hand.num_cards - 1; c++)
     {
-      hands_w += card_space;
+      hands_w += CARD_DRAW_SPACING;
     }
 
     hands_w += CARD_W;
 
     if(h < game->total_player_hands - 1)
     {
-      hands_w += hand_space;
+      hands_w += HAND_DRAW_SPACING;
     }
   }
 
@@ -836,14 +835,42 @@ void draw_player_hands(const struct Game *game)
   {
     player_hand = &game->player_hands[h];
 
+    if(player_hand->status == Lost)
+    {
+      sprintf(plus_minus, "-");
+    }
+    else if(player_hand->status == Won)
+    {
+      sprintf(plus_minus, "+");
+    }
+    else
+    {
+      sprintf(plus_minus, "");
+    }
+
+    if(!player_hand->played && h == game->current_player_hand)
+    {
+      sprintf(current, " *");
+    }
+    else
+    {
+      sprintf(current, "");
+    }
+
     for(c = 0; c < player_hand->hand.num_cards; c++)
     {
       card = &player_hand->hand.cards[c];
       draw_card(game, card, x, PLAYER_HANDS_Y_OFFSET);
 
+      if(c == 0)
+      {
+	sprintf(str, "%s$%.2f%s", plus_minus, (double)(player_hand->bet / 100), current);
+	write_text(game, str, FontMd, (int) x + 3, PLAYER_HANDS_Y_OFFSET + CARD_H + 2);
+      }
+
       if(c < player_hand->hand.num_cards - 1)
       {
-	x += card_space;
+	x += CARD_DRAW_SPACING;
       }
       else if(c == player_hand->hand.num_cards - 1)
       {
@@ -853,15 +880,9 @@ void draw_player_hands(const struct Game *game)
 
     if(h < game->total_player_hands - 1)
     {
-      x += hand_space;
+      x += HAND_DRAW_SPACING;
     }
   }  
-}
-
-void draw_hands(const struct Game *game)
-{
-  draw_dealer_hand(game);
-  draw_player_hands(game);
 }
 
 bool need_to_shuffle(const struct Game *game)
