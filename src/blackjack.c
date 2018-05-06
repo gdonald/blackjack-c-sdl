@@ -329,6 +329,21 @@ SDL_Texture *load_bg_texture(SDL_Renderer *renderer)
   return bg_texture;
 }
 
+SDL_Texture *load_rules_texture(SDL_Renderer *renderer)
+{
+  SDL_Surface *rules_surface = SDL_LoadBMP("img/rules.bmp");
+  if(rules_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/rules.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_Texture *rules_texture = SDL_CreateTextureFromSurface(renderer, rules_surface);
+  SDL_FreeSurface(rules_surface);
+
+  return rules_texture;
+}
+
 SDL_Renderer *create_renderer(SDL_Window *window)
 {
   SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);

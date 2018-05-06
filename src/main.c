@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
   SDL_Window *window = create_window();
   SDL_Renderer *renderer = create_renderer(window);
   SDL_Texture *bg_texture = load_bg_texture(renderer);
+  SDL_Texture *rules_texture = load_rules_texture(renderer);
   SDL_Texture *cards_texture = load_cards_texture(renderer);
 
   struct Game game = { .num_decks = 8,
@@ -40,6 +41,7 @@ int main(int argc, char *argv[])
   {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
+    SDL_RenderCopy(renderer, rules_texture, NULL, NULL);
 
     draw_hands(&game);
 

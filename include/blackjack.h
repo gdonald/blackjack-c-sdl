@@ -122,6 +122,7 @@ const char *card_to_string(const struct Game *game, const struct Card *card);
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer);
 SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
+SDL_Texture *load_rules_texture(SDL_Renderer *renderer);
 SDL_Renderer *create_renderer(SDL_Window *window);
 SDL_Window *create_window(void);
 
