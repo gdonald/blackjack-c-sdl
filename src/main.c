@@ -12,18 +12,14 @@ int main(int argc, char *argv[])
   int mouse_x, mouse_y;
   bool quit = false;
 
+  //SDL_StartTextInput();
+  
   SDL_Event event;
   SDL_Window *window = create_window();
   SDL_Renderer *renderer = create_renderer(window);
   SDL_Texture *bg_texture = load_bg_texture(renderer);
   SDL_Texture *rules_texture = load_rules_texture(renderer);
   SDL_Texture *cards_texture = load_cards_texture(renderer);
-
-  if(TTF_Init() == -1)
-  {
-    printf("TTF_Init failed: %s\n", TTF_GetError());
-    exit(EXIT_FAILURE);
-  }
   
   struct Game game = { .num_decks = 8,
 		       .money = 10000,
@@ -37,32 +33,13 @@ int main(int argc, char *argv[])
   };
 
   load_btn_textures(&game, renderer);
-
-  game.fonts[FontSm] = TTF_OpenFont(FONT, 15);
-  if(game.fonts[FontSm] == NULL)
-  {
-    printf("Failed to load font! Error: %s\n", TTF_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  game.fonts[FontMd] = TTF_OpenFont(FONT, 18);
-  if(game.fonts[FontMd] == NULL)
-  {
-    printf("Failed to load font! Error: %s\n", TTF_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  game.fonts[FontLg] = TTF_OpenFont(FONT, 21);
-  if(game.fonts[FontLg] == NULL)
-  {
-    printf("Failed to load font! Error: %s\n", TTF_GetError());
-    exit(EXIT_FAILURE);
-  }
-
+  load_fonts(&game);
   load_game(&game);
+
   new_regular(&game);
   //new_aces(&game);
   //new_eights(&game);
+
   deal_new_hand(&game);
   
   while(!quit)
@@ -82,6 +59,9 @@ int main(int argc, char *argv[])
     case MenuGame:
       draw_game_menu(&game);
       break;
+    case MenuNewBet:
+      draw_bet_menu(&game);
+      break;
     }
 
     draw_money(&game);
@@ -91,15 +71,16 @@ int main(int argc, char *argv[])
 
     while(SDL_PollEvent(&event) != 0)
     {
-      if(event.type == SDL_MOUSEBUTTONUP)
+      switch(event.type)
       {
+      case SDL_MOUSEBUTTONUP:
 	SDL_GetMouseState(&mouse_x, &mouse_y);
 	handle_click(&game, &event.button, mouse_x, mouse_y);
-      }
+	break;
 
-      if(event.type == SDL_QUIT)
-      {
+      case SDL_QUIT:
 	quit = true;
+	break;
       }
     }
 

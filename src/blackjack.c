@@ -51,6 +51,36 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+void load_fonts(struct Game *game)
+{
+  if(TTF_Init() == -1)
+  {
+    printf("TTF_Init failed: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game->fonts[FontSm] = TTF_OpenFont(FONT, 15);
+  if(game->fonts[FontSm] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game->fonts[FontMd] = TTF_OpenFont(FONT, 18);
+  if(game->fonts[FontMd] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  game->fonts[FontLg] = TTF_OpenFont(FONT, 21);
+  if(game->fonts[FontLg] == NULL)
+  {
+    printf("Failed to load font! Error: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
+  }
+}
+
 void draw_money(const struct Game *game)
 {
   char str[32];
@@ -127,7 +157,8 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 
       if(inside_rect(game->btn_rects[BtnBet], mouse_x, mouse_y))
       {
-	get_new_bet(game);	
+	SDL_StartTextInput();
+	game->current_menu = MenuNewBet;
 	return;
       }
 
@@ -143,6 +174,14 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
       }
     }
   }
+}
+
+void draw_bet_menu(struct Game *game)
+{
+  int x = (SCREEN_W / 2) - 100;
+  int y = BUTTONS_Y_OFFSET;
+
+  write_text(game, "New Bet: ", FontLg, x, y);
 }
 
 void draw_hand_menu(struct Game *game)
@@ -1044,6 +1083,7 @@ void deal_new_hand(struct Game *game)
   save_game(game);
 }
 
+/*
 void get_new_bet(struct Game *game)
 {
   unsigned tmp;
@@ -1059,6 +1099,7 @@ void get_new_bet(struct Game *game)
   normalize_bet(game);
   deal_new_hand(game);
 }
+*/
 
 void get_new_num_decks(struct Game *game)
 {

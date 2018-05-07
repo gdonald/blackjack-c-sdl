@@ -52,7 +52,7 @@ enum HandStatus { Won=1, Lost, Push };
 enum Buttons { BtnDbl, BtnHit, BtnStand, BtnSplit,
 	       BtnDeal, BtnBet, BtnOptions, BtnQuit };
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
-enum Menus { MenuGame, MenuHand };
+enum Menus { MenuGame, MenuHand, MenuNewBet };
 enum FontSizes { FontSm, FontMd, FontLg };
 
 extern const unsigned shuffle_specs[8][2];
@@ -152,6 +152,8 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
+void draw_bet_menu(struct Game *game);
+void load_fonts(struct Game *game);
 void draw_bet(const struct Game *game);
 void draw_money(const struct Game *game);
 void write_text(const struct Game *game, const char *text, const int font_size, const int x, const int y);
@@ -174,7 +176,7 @@ void insure_hand(struct Game *game);
 void no_insurance(struct Game *game);
 void ask_insurance(struct Game *game);
 void deal_new_hand(struct Game *game);
-void get_new_bet(struct Game *game);
+//void get_new_bet(struct Game *game);
 void game_options(struct Game *game);
 void get_new_num_decks(struct Game *game);
 void get_new_deck_type(struct Game *game);
