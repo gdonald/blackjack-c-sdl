@@ -102,6 +102,7 @@ struct PlayerHand
 
 struct Game
 {
+  unsigned screen_h, screen_w;
   struct Shoe shoe;
   struct DealerHand dealer_hand;
   struct PlayerHand player_hands[MAX_PLAYER_HANDS];
@@ -129,7 +130,7 @@ SDL_Texture *load_cards_texture(SDL_Renderer *renderer);
 SDL_Texture *load_bg_texture(SDL_Renderer *renderer);
 SDL_Texture *load_rules_texture(SDL_Renderer *renderer);
 SDL_Renderer *create_renderer(SDL_Window *window);
-SDL_Window *create_window(void);
+SDL_Window *create_window(const struct Game *game);
 
 bool inside_rect(SDL_Rect rect, int x, int y);
 bool is_ace(const struct Card *card);
@@ -160,7 +161,7 @@ void write_text(const struct Game *game, const char *text, const int font_size, 
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
-void load_btn_textures(struct Game *game, SDL_Renderer *renderer);
+void load_btn_textures(struct Game *game);
 
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);

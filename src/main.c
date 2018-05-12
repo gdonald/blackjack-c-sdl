@@ -13,26 +13,27 @@ int main(int argc, char *argv[])
   bool quit = false;
 
   //SDL_StartTextInput();
-  
-  SDL_Event event;
-  SDL_Window *window = create_window();
-  SDL_Renderer *renderer = create_renderer(window);
-  SDL_Texture *bg_texture = load_bg_texture(renderer);
-  SDL_Texture *rules_texture = load_rules_texture(renderer);
-  SDL_Texture *cards_texture = load_cards_texture(renderer);
-  
-  struct Game game = { .num_decks = 8,
+
+  struct Game game = { .screen_h = SCREEN_H,
+		       .screen_w = SCREEN_W,
+		       .num_decks = 8,
 		       .money = 10000,
 		       .current_bet = 500,
 		       .shuffle_specs = shuffle_specs,
 		       .card_faces = card_faces,
 		       .num_players = arguments.players,
-		       .renderer = renderer,
-		       .cards_texture = cards_texture,
 		       .current_menu = MenuHand
   };
+  
+  SDL_Event event;
+  SDL_Window *window = create_window(&game);
+  game.renderer = create_renderer(window);
+  game.cards_texture = load_cards_texture(game.renderer);
 
-  load_btn_textures(&game, renderer);
+  SDL_Texture *bg_texture = load_bg_texture(game.renderer);
+  SDL_Texture *rules_texture = load_rules_texture(game.renderer);
+  
+  load_btn_textures(&game);
   load_fonts(&game);
   load_game(&game);
 
@@ -44,9 +45,9 @@ int main(int argc, char *argv[])
   
   while(!quit)
   {
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
-    SDL_RenderCopy(renderer, rules_texture, NULL, NULL);
+    SDL_RenderClear(game.renderer);
+    SDL_RenderCopy(game.renderer, bg_texture, NULL, NULL);
+    SDL_RenderCopy(game.renderer, rules_texture, NULL, NULL);
 
     draw_dealer_hand(&game);
     draw_player_hands(&game);
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
     draw_money(&game);
     draw_bet(&game);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(game.renderer);
 
     while(SDL_PollEvent(&event) != 0)
     {
@@ -81,6 +82,23 @@ int main(int argc, char *argv[])
       case SDL_QUIT:
 	quit = true;
 	break;
+      }
+
+      if (event.type == SDL_WINDOWEVENT)
+      {
+        switch(event.window.event)
+	{
+        case SDL_WINDOWEVENT_RESIZED:
+	  /*
+	  printf("Window %d resized to %dx%d\n",
+		 event.window.windowID,
+		 event.window.data1,
+		 event.window.data2);
+	  */
+	  game.screen_w = (unsigned) event.window.data1;
+	  game.screen_h = (unsigned) event.window.data2;
+	  break;
+	}
       }
     }
 

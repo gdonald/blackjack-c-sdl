@@ -178,7 +178,7 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 
 void draw_bet_menu(struct Game *game)
 {
-  int x = (SCREEN_W / 2) - 100;
+  int x = (game->screen_w / 2) - 100;
   int y = BUTTONS_Y_OFFSET;
 
   write_text(game, "New Bet: ", FontLg, x, y);
@@ -209,22 +209,22 @@ void draw_hand_menu(struct Game *game)
   clip[BtnSplit].w = BTN_W;
   clip[BtnSplit].h = BTN_H;
 
-  game->btn_rects[BtnDbl].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDbl].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
   game->btn_rects[BtnDbl].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnDbl].w = BTN_W;
   game->btn_rects[BtnDbl].h = BTN_H;
 
-  game->btn_rects[BtnHit].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnHit].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
   game->btn_rects[BtnHit].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnHit].w = BTN_W;
   game->btn_rects[BtnHit].h = BTN_H;
 
-  game->btn_rects[BtnStand].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnStand].x = (game->screen_w / 2) + (BTN_SPACE / 2);
   game->btn_rects[BtnStand].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnStand].w = BTN_W;
   game->btn_rects[BtnStand].h = BTN_H;
 
-  game->btn_rects[BtnSplit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
+  game->btn_rects[BtnSplit].x = (game->screen_w / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
   game->btn_rects[BtnSplit].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnSplit].w = BTN_W;
   game->btn_rects[BtnSplit].h = BTN_H;
@@ -260,22 +260,22 @@ void draw_game_menu(struct Game *game)
   clip[BtnQuit].w = BTN_W;
   clip[BtnQuit].h = BTN_H;
 
-  game->btn_rects[BtnDeal].x = (SCREEN_W / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDeal].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
   game->btn_rects[BtnDeal].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnDeal].w = BTN_W;
   game->btn_rects[BtnDeal].h = BTN_H;
 
-  game->btn_rects[BtnBet].x = (SCREEN_W / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnBet].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
   game->btn_rects[BtnBet].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnBet].w = BTN_W;
   game->btn_rects[BtnBet].h = BTN_H;
 
-  game->btn_rects[BtnOptions].x = (SCREEN_W / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnOptions].x = (game->screen_w / 2) + (BTN_SPACE / 2);
   game->btn_rects[BtnOptions].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnOptions].w = BTN_W;
   game->btn_rects[BtnOptions].h = BTN_H;
 
-  game->btn_rects[BtnQuit].x = (SCREEN_W / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
+  game->btn_rects[BtnQuit].x = (game->screen_w / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
   game->btn_rects[BtnQuit].y = BUTTONS_Y_OFFSET;
   game->btn_rects[BtnQuit].w = BTN_W;
   game->btn_rects[BtnQuit].h = BTN_H;
@@ -288,7 +288,7 @@ void draw_game_menu(struct Game *game)
   game->current_menu = MenuGame;
 }
 
-void load_btn_textures(struct Game *game, SDL_Renderer *renderer)
+void load_btn_textures(struct Game *game)
 {
   SDL_Surface *btn_hit_surface     = SDL_LoadBMP("img/btn_hit.bmp");
   SDL_Surface *btn_split_surface   = SDL_LoadBMP("img/btn_split.bmp");
@@ -347,14 +347,14 @@ void load_btn_textures(struct Game *game, SDL_Renderer *renderer)
     exit(EXIT_FAILURE);
   }
 
-  game->btn_textures[BtnHit]     = SDL_CreateTextureFromSurface(renderer, btn_hit_surface);
-  game->btn_textures[BtnSplit]   = SDL_CreateTextureFromSurface(renderer, btn_split_surface);
-  game->btn_textures[BtnStand]   = SDL_CreateTextureFromSurface(renderer, btn_stand_surface);
-  game->btn_textures[BtnDbl]     = SDL_CreateTextureFromSurface(renderer, btn_dbl_surface);
-  game->btn_textures[BtnDeal]    = SDL_CreateTextureFromSurface(renderer, btn_deal_surface);
-  game->btn_textures[BtnBet]     = SDL_CreateTextureFromSurface(renderer, btn_bet_surface);
-  game->btn_textures[BtnOptions] = SDL_CreateTextureFromSurface(renderer, btn_options_surface);
-  game->btn_textures[BtnQuit]    = SDL_CreateTextureFromSurface(renderer, btn_quit_surface);
+  game->btn_textures[BtnHit]     = SDL_CreateTextureFromSurface(game->renderer, btn_hit_surface);
+  game->btn_textures[BtnSplit]   = SDL_CreateTextureFromSurface(game->renderer, btn_split_surface);
+  game->btn_textures[BtnStand]   = SDL_CreateTextureFromSurface(game->renderer, btn_stand_surface);
+  game->btn_textures[BtnDbl]     = SDL_CreateTextureFromSurface(game->renderer, btn_dbl_surface);
+  game->btn_textures[BtnDeal]    = SDL_CreateTextureFromSurface(game->renderer, btn_deal_surface);
+  game->btn_textures[BtnBet]     = SDL_CreateTextureFromSurface(game->renderer, btn_bet_surface);
+  game->btn_textures[BtnOptions] = SDL_CreateTextureFromSurface(game->renderer, btn_options_surface);
+  game->btn_textures[BtnQuit]    = SDL_CreateTextureFromSurface(game->renderer, btn_quit_surface);
 
   SDL_FreeSurface(btn_hit_surface);
   SDL_FreeSurface(btn_stand_surface);
@@ -423,7 +423,7 @@ SDL_Renderer *create_renderer(SDL_Window *window)
   return renderer;
 }
 
-SDL_Window *create_window(void)
+SDL_Window *create_window(const struct Game *game)
 {
   if(SDL_Init(SDL_INIT_VIDEO) < 0)
   {
@@ -435,9 +435,9 @@ SDL_Window *create_window(void)
     "Blackjack",
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED,
-    SCREEN_W,
-    SCREEN_H,
-    SDL_WINDOW_OPENGL
+    (int) game->screen_w,
+    (int) game->screen_h,
+    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
   );
 
   if(window == NULL)
@@ -825,7 +825,7 @@ void draw_dealer_hand(const struct Game *game)
   const struct DealerHand *dealer_hand = &game->dealer_hand;
   const struct Card *card;
 
-  unsigned x_offset = (SCREEN_W / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
+  unsigned x_offset = (game->screen_w / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
 
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
@@ -867,7 +867,7 @@ void draw_player_hands(const struct Game *game)
     }
   }
 
-  x_offset = (SCREEN_W / 2) - (hands_w / 2);
+  x_offset = (game->screen_w / 2) - (hands_w / 2);
   x = x_offset;
 
   for(h = 0; h < game->total_player_hands; h++)
