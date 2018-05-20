@@ -103,6 +103,10 @@ struct PlayerHand
 struct Game
 {
   unsigned screen_h, screen_w;
+  unsigned player_hands_y_offset;
+  unsigned player_hands_y_percent;
+  unsigned buttons_y_offset;
+  unsigned buttons_y_percent;
   struct Shoe shoe;
   struct DealerHand dealer_hand;
   struct PlayerHand player_hands[MAX_PLAYER_HANDS];
@@ -163,6 +167,7 @@ void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
 void load_btn_textures(struct Game *game);
 
+void calculate_offsets(struct Game *game);
 void normalize_bet(struct Game *game);
 void save_game(const struct Game *game);
 void load_game(struct Game *game);

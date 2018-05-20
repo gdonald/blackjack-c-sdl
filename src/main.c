@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
 
   struct Game game = { .screen_h = SCREEN_H,
 		       .screen_w = SCREEN_W,
+		       .player_hands_y_offset = PLAYER_HANDS_Y_OFFSET,
+		       .buttons_y_offset = BUTTONS_Y_OFFSET,
 		       .num_decks = 8,
 		       .money = 10000,
 		       .current_bet = 500,
@@ -24,7 +26,10 @@ int main(int argc, char *argv[])
 		       .num_players = arguments.players,
 		       .current_menu = MenuHand
   };
-  
+
+  game.player_hands_y_percent = (unsigned)((float) game.player_hands_y_offset / (float) game.screen_h * 100.0f);
+  game.buttons_y_percent      = (unsigned)((float) game.buttons_y_offset      / (float) game.screen_h * 100.0f);
+
   SDL_Event event;
   SDL_Window *window = create_window(&game);
   game.renderer = create_renderer(window);
@@ -89,14 +94,10 @@ int main(int argc, char *argv[])
         switch(event.window.event)
 	{
         case SDL_WINDOWEVENT_RESIZED:
-	  /*
-	  printf("Window %d resized to %dx%d\n",
-		 event.window.windowID,
-		 event.window.data1,
-		 event.window.data2);
-	  */
 	  game.screen_w = (unsigned) event.window.data1;
 	  game.screen_h = (unsigned) event.window.data2;
+	  calculate_offsets(&game);
+
 	  break;
 	}
       }

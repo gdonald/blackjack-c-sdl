@@ -179,9 +179,7 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 void draw_bet_menu(struct Game *game)
 {
   int x = (game->screen_w / 2) - 100;
-  int y = BUTTONS_Y_OFFSET;
-
-  write_text(game, "New Bet: ", FontLg, x, y);
+  write_text(game, "New Bet: ", FontLg, x, (int)game->buttons_y_offset);
 }
 
 void draw_hand_menu(struct Game *game)
@@ -210,22 +208,22 @@ void draw_hand_menu(struct Game *game)
   clip[BtnSplit].h = BTN_H;
 
   game->btn_rects[BtnDbl].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
-  game->btn_rects[BtnDbl].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnDbl].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnDbl].w = BTN_W;
   game->btn_rects[BtnDbl].h = BTN_H;
 
   game->btn_rects[BtnHit].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
-  game->btn_rects[BtnHit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnHit].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnHit].w = BTN_W;
   game->btn_rects[BtnHit].h = BTN_H;
 
   game->btn_rects[BtnStand].x = (game->screen_w / 2) + (BTN_SPACE / 2);
-  game->btn_rects[BtnStand].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnStand].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnStand].w = BTN_W;
   game->btn_rects[BtnStand].h = BTN_H;
 
   game->btn_rects[BtnSplit].x = (game->screen_w / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
-  game->btn_rects[BtnSplit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnSplit].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnSplit].w = BTN_W;
   game->btn_rects[BtnSplit].h = BTN_H;
   
@@ -261,22 +259,22 @@ void draw_game_menu(struct Game *game)
   clip[BtnQuit].h = BTN_H;
 
   game->btn_rects[BtnDeal].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
-  game->btn_rects[BtnDeal].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnDeal].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnDeal].w = BTN_W;
   game->btn_rects[BtnDeal].h = BTN_H;
 
   game->btn_rects[BtnBet].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
-  game->btn_rects[BtnBet].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnBet].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnBet].w = BTN_W;
   game->btn_rects[BtnBet].h = BTN_H;
 
   game->btn_rects[BtnOptions].x = (game->screen_w / 2) + (BTN_SPACE / 2);
-  game->btn_rects[BtnOptions].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnOptions].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnOptions].w = BTN_W;
   game->btn_rects[BtnOptions].h = BTN_H;
 
   game->btn_rects[BtnQuit].x = (game->screen_w / 2) + BTN_W + (BTN_SPACE) + (BTN_SPACE / 2);
-  game->btn_rects[BtnQuit].y = BUTTONS_Y_OFFSET;
+  game->btn_rects[BtnQuit].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnQuit].w = BTN_W;
   game->btn_rects[BtnQuit].h = BTN_H;
 
@@ -446,6 +444,8 @@ SDL_Window *create_window(const struct Game *game)
     exit(EXIT_FAILURE);
   }
 
+  SDL_SetWindowMinimumSize(window, (int) game->screen_w, (int) game->screen_h);
+
   return window;
 }
 
@@ -460,6 +460,12 @@ void draw_card(const struct Game *game, const struct Card *card, const unsigned 
   SDL_Rect offset = { (int) x, (int) y, CARD_W, CARD_H };
 
   SDL_RenderCopy(game->renderer, game->cards_texture, &clip[0], &offset);
+}
+
+void calculate_offsets(struct Game *game)
+{
+  game->player_hands_y_offset = (unsigned)(game->screen_h * (game->player_hands_y_percent / 100.0f));
+  game->buttons_y_offset      = (unsigned)(game->screen_h * (game->buttons_y_percent      / 100.0f));
 }
 
 bool is_ace(const struct Card *card)
@@ -899,12 +905,12 @@ void draw_player_hands(const struct Game *game)
     for(c = 0; c < player_hand->hand.num_cards; c++)
     {
       card = &player_hand->hand.cards[c];
-      draw_card(game, card, x, PLAYER_HANDS_Y_OFFSET);
+      draw_card(game, card, x, game->player_hands_y_offset);
 
       if(c == 0)
       {
 	sprintf(str, "%s$%.2f%s", plus_minus, (double)(player_hand->bet / 100), current);
-	write_text(game, str, FontMd, (int) x + 3, PLAYER_HANDS_Y_OFFSET + CARD_H + 2);
+	write_text(game, str, FontMd, (int) x + 3, (int)game->player_hands_y_offset + CARD_H + 2);
       }
 
       if(c < player_hand->hand.num_cards - 1)
