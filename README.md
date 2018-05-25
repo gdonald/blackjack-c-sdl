@@ -3,7 +3,7 @@ Blackjack written in C using SDL
 
 ## Dependencies
 
-apt install libsdl2-dev libsdl2-gfx-dev libsdl2-ttf-dev
+apt install clang libsdl2-dev libsdl2-gfx-dev libsdl2-ttf-dev
 
 ## Build
 
