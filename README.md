@@ -12,3 +12,5 @@ make
 ## Run
 
 ./blackjack
+
+![Blackjack](https://raw.githubusercontent.com/gdonald/blackjack-c-sdl/master/img/ss.png)
