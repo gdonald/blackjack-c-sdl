@@ -176,10 +176,23 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
   }
 }
 
+void handle_new_bet_keystroke(struct Game *game, char *keystroke)
+{
+  if(isdigit(*keystroke))
+  {
+    if(strlen(game->current_bet_str) < sizeof(game->current_bet_str))
+    {
+      strcat(game->current_bet_str, keystroke);
+    }
+  }
+}
+
 void draw_bet_menu(struct Game *game)
 {
   int x = (game->screen_w / 2) - 100;
-  write_text(game, "New Bet: ", FontLg, x, (int)game->buttons_y_offset);
+  char str[32] = { 0 };
+  snprintf(str, sizeof(str), "New Bet: $%s", game->current_bet_str);
+  write_text(game, str, FontLg, x, (int)game->buttons_y_offset);
 }
 
 void draw_hand_menu(struct Game *game)

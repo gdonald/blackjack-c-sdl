@@ -12,8 +12,6 @@ int main(int argc, char *argv[])
   int mouse_x, mouse_y;
   bool quit = false;
 
-  //SDL_StartTextInput();
-
   struct Game game = { .screen_h = SCREEN_H,
 		       .screen_w = SCREEN_W,
 		       .player_hands_y_offset = PLAYER_HANDS_Y_OFFSET,
@@ -66,6 +64,7 @@ int main(int argc, char *argv[])
       draw_game_menu(&game);
       break;
     case MenuNewBet:
+      SDL_StartTextInput();
       draw_bet_menu(&game);
       break;
     }
@@ -84,12 +83,41 @@ int main(int argc, char *argv[])
 	handle_click(&game, &event.button, mouse_x, mouse_y);
 	break;
 
+      case SDL_KEYDOWN:
+	switch(event.key.keysym.sym)
+	{
+	case SDLK_BACKSPACE:
+	  if(strlen(game.current_bet_str))
+          {
+            game.current_bet_str[strlen(game.current_bet_str) - 1] = '\0';
+          }
+          break;
+
+	case SDLK_RETURN:
+	  game.current_bet = (unsigned) atoi(game.current_bet_str) * 100;
+	  normalize_bet(&game);
+	  game.current_bet_str[0] = '\0';
+	  game.current_menu = MenuGame;
+	  SDL_StopTextInput();
+	  break;
+	}
+
+      case SDL_TEXTINPUT:
+	switch(game.current_menu)
+	{
+	case MenuNewBet:
+	  handle_new_bet_keystroke(&game, event.text.text);
+	  break;
+	}
+
+	break;
+
       case SDL_QUIT:
 	quit = true;
 	break;
       }
 
-      if (event.type == SDL_WINDOWEVENT)
+      if(event.type == SDL_WINDOWEVENT)
       {
         switch(event.window.event)
 	{

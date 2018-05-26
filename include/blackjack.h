@@ -114,6 +114,7 @@ struct Game
   unsigned num_decks;
   unsigned money;
   unsigned current_bet;
+  char current_bet_str[8];
   unsigned current_player_hand;
   unsigned total_player_hands;
   const unsigned (*shuffle_specs)[2];
@@ -157,6 +158,7 @@ unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod
 unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
+void handle_new_bet_keystroke(struct Game *game, char *keystroke);
 void draw_bet_menu(struct Game *game);
 void load_fonts(struct Game *game);
 void draw_bet(const struct Game *game);
