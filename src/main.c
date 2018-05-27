@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 
   SDL_Event event;
   SDL_Window *window = create_window(&game);
+
   game.renderer = create_renderer(window);
   game.cards_texture = load_cards_texture(game.renderer);
 
@@ -54,21 +55,7 @@ int main(int argc, char *argv[])
 
     draw_dealer_hand(&game);
     draw_player_hands(&game);
-
-    switch(game.current_menu)
-    {
-    case MenuHand:
-      draw_hand_menu(&game);
-      break;
-    case MenuGame:
-      draw_game_menu(&game);
-      break;
-    case MenuNewBet:
-      SDL_StartTextInput();
-      draw_bet_menu(&game);
-      break;
-    }
-
+    draw_menus(&game);
     draw_money(&game);
     draw_bet(&game);
 

@@ -164,13 +164,34 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 
       if(inside_rect(game->btn_rects[BtnOptions], mouse_x, mouse_y))
       {
-	game_options(game);	
+	//game_options(game);
+	game->current_menu = MenuDecks;
 	return;
       }
 
       if(inside_rect(game->btn_rects[BtnQuit], mouse_x, mouse_y))
       {
 	exit(EXIT_SUCCESS);
+      }
+    }
+    else if(game->current_menu == MenuDecks)
+    {
+      if(inside_rect(game->btn_rects[BtnDecks], mouse_x, mouse_y))
+      {
+	//get_new_num_decks(game);
+	return;
+      }
+
+      if(inside_rect(game->btn_rects[BtnType], mouse_x, mouse_y))
+      {
+	//get_new_deck_type(game);
+	return;
+      }
+
+      if(inside_rect(game->btn_rects[BtnBack], mouse_x, mouse_y))
+      {
+	game->current_menu = MenuGame;
+	return;
       }
     }
   }
@@ -199,7 +220,7 @@ void draw_hand_menu(struct Game *game)
 {
   struct PlayerHand *player_hand = &game->player_hands[game->current_player_hand];
 
-  SDL_Rect clip[8];
+  SDL_Rect clip[11];
   clip[BtnDbl].x = 0;
   clip[BtnDbl].y = player_can_dbl(game) ? BtnUp : BtnOff;
   clip[BtnDbl].w = BTN_W;
@@ -250,7 +271,7 @@ void draw_hand_menu(struct Game *game)
 
 void draw_game_menu(struct Game *game)
 {
-  SDL_Rect clip[8];
+  SDL_Rect clip[11];
   clip[BtnDeal].x = 0;
   clip[BtnDeal].y = BtnUp;
   clip[BtnDeal].w = BTN_W;
@@ -299,6 +320,66 @@ void draw_game_menu(struct Game *game)
   game->current_menu = MenuGame;
 }
 
+void draw_decks_menu(struct Game *game)
+{
+  SDL_Rect clip[11];
+  clip[BtnDecks].x = 0;
+  clip[BtnDecks].y = BtnUp;
+  clip[BtnDecks].w = BTN_W;
+  clip[BtnDecks].h = BTN_H;
+
+  clip[BtnType].x = 0;
+  clip[BtnType].y = BtnUp;
+  clip[BtnType].w = BTN_W;
+  clip[BtnType].h = BTN_H;
+
+  clip[BtnBack].x = 0;
+  clip[BtnBack].y = BtnUp;
+  clip[BtnBack].w = BTN_W;
+  clip[BtnBack].h = BTN_H;
+
+  game->btn_rects[BtnDecks].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDecks].y = (int)game->buttons_y_offset;
+  game->btn_rects[BtnDecks].w = BTN_W;
+  game->btn_rects[BtnDecks].h = BTN_H;
+
+  game->btn_rects[BtnType].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnType].y = (int)game->buttons_y_offset;
+  game->btn_rects[BtnType].w = BTN_W;
+  game->btn_rects[BtnType].h = BTN_H;
+
+  game->btn_rects[BtnBack].x = (game->screen_w / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnBack].y = (int)game->buttons_y_offset;
+  game->btn_rects[BtnBack].w = BTN_W;
+  game->btn_rects[BtnBack].h = BTN_H;
+
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnDecks], &clip[BtnDecks], &game->btn_rects[BtnDecks]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnType],  &clip[BtnType],  &game->btn_rects[BtnType]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnBack],  &clip[BtnBack],  &game->btn_rects[BtnBack]);
+
+  game->current_menu = MenuDecks;
+}
+
+void draw_menus(struct Game *game)
+{
+  switch(game->current_menu)
+  {
+  case MenuDecks:
+    draw_decks_menu(game);
+    break;
+  case MenuHand:
+    draw_hand_menu(game);
+    break;
+  case MenuGame:
+    draw_game_menu(game);
+    break;
+  case MenuNewBet:
+    SDL_StartTextInput();
+    draw_bet_menu(game);
+    break;
+  }
+}
+
 void load_btn_textures(struct Game *game)
 {
   SDL_Surface *btn_hit_surface     = SDL_LoadBMP("img/btn_hit.bmp");
@@ -309,6 +390,9 @@ void load_btn_textures(struct Game *game)
   SDL_Surface *btn_bet_surface     = SDL_LoadBMP("img/btn_bet.bmp");
   SDL_Surface *btn_options_surface = SDL_LoadBMP("img/btn_options.bmp");
   SDL_Surface *btn_quit_surface    = SDL_LoadBMP("img/btn_quit.bmp");
+  SDL_Surface *btn_decks_surface   = SDL_LoadBMP("img/btn_decks.bmp");
+  SDL_Surface *btn_type_surface    = SDL_LoadBMP("img/btn_type.bmp");
+  SDL_Surface *btn_back_surface    = SDL_LoadBMP("img/btn_back.bmp");
 
   if(btn_hit_surface == NULL)
   {
@@ -358,6 +442,24 @@ void load_btn_textures(struct Game *game)
     exit(EXIT_FAILURE);
   }
 
+  if(btn_decks_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_decks.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if(btn_type_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_type.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if(btn_back_surface == NULL)
+  {
+    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_back.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
   game->btn_textures[BtnHit]     = SDL_CreateTextureFromSurface(game->renderer, btn_hit_surface);
   game->btn_textures[BtnSplit]   = SDL_CreateTextureFromSurface(game->renderer, btn_split_surface);
   game->btn_textures[BtnStand]   = SDL_CreateTextureFromSurface(game->renderer, btn_stand_surface);
@@ -366,6 +468,9 @@ void load_btn_textures(struct Game *game)
   game->btn_textures[BtnBet]     = SDL_CreateTextureFromSurface(game->renderer, btn_bet_surface);
   game->btn_textures[BtnOptions] = SDL_CreateTextureFromSurface(game->renderer, btn_options_surface);
   game->btn_textures[BtnQuit]    = SDL_CreateTextureFromSurface(game->renderer, btn_quit_surface);
+  game->btn_textures[BtnDecks]   = SDL_CreateTextureFromSurface(game->renderer, btn_decks_surface);
+  game->btn_textures[BtnType]    = SDL_CreateTextureFromSurface(game->renderer, btn_type_surface);
+  game->btn_textures[BtnBack]    = SDL_CreateTextureFromSurface(game->renderer, btn_back_surface);
 
   SDL_FreeSurface(btn_hit_surface);
   SDL_FreeSurface(btn_stand_surface);
@@ -375,6 +480,9 @@ void load_btn_textures(struct Game *game)
   SDL_FreeSurface(btn_bet_surface);
   SDL_FreeSurface(btn_options_surface);
   SDL_FreeSurface(btn_quit_surface);
+  SDL_FreeSurface(btn_decks_surface);
+  SDL_FreeSurface(btn_type_surface);
+  SDL_FreeSurface(btn_back_surface);
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
@@ -458,8 +566,21 @@ SDL_Window *create_window(const struct Game *game)
   }
 
   SDL_SetWindowMinimumSize(window, (int) game->screen_w, (int) game->screen_h);
+  load_window_icon(window);
 
   return window;
+}
+
+void load_window_icon(SDL_Window *window)
+{
+  SDL_Surface *icon_surface = SDL_LoadBMP("img/icon.bmp");
+  if(icon_surface == NULL)
+  {
+    printf( "Unable to load image %s! SDL Error: %s\n", "img/icon.bmp", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  SDL_SetWindowIcon(window, icon_surface);
 }
 
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y)
