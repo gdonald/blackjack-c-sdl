@@ -454,107 +454,23 @@ void load_btn_textures(struct Game *game)
   SDL_Surface *btn_sevens_surface     = SDL_LoadBMP("img/btn_sevens.bmp");
   SDL_Surface *btn_eights_surface     = SDL_LoadBMP("img/btn_eights.bmp");
 
-  if(btn_hit_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_split_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_stand_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_dbl_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_dbl.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_deal_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_deal.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_bet_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_bet.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_options_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_options.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_quit_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_quit.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_decks_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_decks.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_type_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_type.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_back_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_back.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_regular_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_regular.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_aces_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_aces.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_jacks_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_jacks.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_aces_jacks_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_aces_jacks.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_sevens_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_sevens.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if(btn_eights_surface == NULL)
-  {
-    printf("Unable to load image %s! SDL Error: %s\n", "img/btn_eights.bmp", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
+  if(btn_hit_surface        == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp",        SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_split_surface      == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp",      SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_stand_surface      == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_stand.bmp",      SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_dbl_surface        == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_dbl.bmp",        SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_deal_surface       == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_deal.bmp",       SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_bet_surface        == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_bet.bmp",        SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_options_surface    == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_options.bmp",    SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_quit_surface       == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_quit.bmp",       SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_decks_surface      == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_decks.bmp",      SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_type_surface       == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_type.bmp",       SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_back_surface       == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_back.bmp",       SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_regular_surface    == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_regular.bmp",    SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_aces_surface       == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_aces.bmp",       SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_jacks_surface      == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_jacks.bmp",      SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_aces_jacks_surface == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_aces_jacks.bmp", SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_sevens_surface     == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_sevens.bmp",     SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_eights_surface     == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_eights.bmp",     SDL_GetError()); exit(EXIT_FAILURE); }
 
   game->btn_textures[BtnHit]       = SDL_CreateTextureFromSurface(game->renderer, btn_hit_surface);
   game->btn_textures[BtnSplit]     = SDL_CreateTextureFromSurface(game->renderer, btn_split_surface);
@@ -1342,132 +1258,6 @@ void deal_new_hand(struct Game *game)
   game->current_menu = MenuHand;
   save_game(game);
 }
-
-/*
-void get_new_bet(struct Game *game)
-{
-  unsigned tmp;
-
-  printf("  Current Bet: $%u  Enter New Bet: $", (game->current_bet / 100));
-
-  if(1 != scanf("%u", &tmp))
-  {
-    tmp = MIN_BET / 100;
-  }
-
-  game->current_bet = tmp * 100;
-  normalize_bet(game);
-  deal_new_hand(game);
-}
-*/
-
-/*
-void get_new_num_decks(struct Game *game)
-{
-  unsigned tmp;
-
-  printf("  Number Of Decks: %u  Enter New Number Of Decks (1-8): ", (game->num_decks));
-
-  if(1 != scanf("%u", &tmp))
-  {
-    tmp = 1;
-  }
-
-  if(tmp < 1) tmp = 1;
-  if(tmp > 8) tmp = 8;
-
-  game->num_decks = tmp;
-  game_options(game);
-}
-*/
-
-/*
-void get_new_deck_type(struct Game *game)
-{
-  bool br = false;
-  char c = { 0 };
-
-  printf(" (1) Regular  (2) Aces  (3) Jacks  (4) Aces & Jacks  (5) Sevens  (6) Eights\n");
-
-  while(true)
-  {
-    c = (char)getchar();
-
-    switch(c)
-    {
-    case '1':
-      br = true;
-      new_regular(game);
-      break;
-    case '2':
-      br = true;
-      new_aces(game);
-      break;
-    case '3':
-      br = true;
-      new_jacks(game);
-      break;
-    case '4':
-      br = true;
-      new_aces_jacks(game);
-      break;
-    case '5':
-      br = true;
-      new_sevens(game);
-      break;
-    case '6':
-      br = true;
-      new_eights(game);
-      break;
-    default:
-      br = true;
-      game_options(game);
-    }
-
-    if(br)
-    {
-      game->current_menu = MenuGame;
-      break;
-    }
-  }
-}
-*/
-
-/*
-void game_options(struct Game *game)
-{
-  bool br = false;
-  char c = { 0 };
-
-  printf(" (N) Number of Decks  (T) Deck Type  (B) Back\n");
-
-  while(true)
-  {
-    c = (char)getchar();
-
-    switch(c)
-    {
-    case 'n':
-      br = true;
-      get_new_num_decks(game);
-      break;
-    case 't':
-      br = true;
-      get_new_deck_type(game);
-      break;
-    case 'b':
-      br = true;
-      game->current_menu = MenuGame;
-      break;
-    default:
-      br = true;
-      game_options(game);
-    }
-
-    if(br) break;
-  }
-}
-*/
 
 void process(struct Game *game)
 {
