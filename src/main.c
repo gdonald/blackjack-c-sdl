@@ -74,18 +74,49 @@ int main(int argc, char *argv[])
 	switch(event.key.keysym.sym)
 	{
 	case SDLK_BACKSPACE:
-	  if(strlen(game.current_bet_str))
-          {
-            game.current_bet_str[strlen(game.current_bet_str) - 1] = '\0';
-          }
+	  switch(game.current_menu)
+	  {
+	  case MenuNewBet:
+	    if(strlen(game.current_bet_str))
+	    {
+	      game.current_bet_str[strlen(game.current_bet_str) - 1] = '\0';
+	    }
+
+	    break;
+
+	  case MenuNewNumDecks:
+	    if(strlen(game.num_decks_str))
+	    {
+	      game.num_decks_str[strlen(game.num_decks_str) - 1] = '\0';
+	    }
+ 
+	    break;
+	  }
+
           break;
 
 	case SDLK_RETURN:
-	  game.current_bet = (unsigned) atoi(game.current_bet_str) * 100;
-	  normalize_bet(&game);
-	  game.current_bet_str[0] = '\0';
-	  game.current_menu = MenuGame;
-	  SDL_StopTextInput();
+	  switch(game.current_menu)
+	  {
+	  case MenuNewBet:
+	    game.current_bet = (unsigned) atoi(game.current_bet_str) * 100;
+	    normalize_bet(&game);
+	    game.current_bet_str[0] = '\0';
+	    game.current_menu = MenuGame;
+	    SDL_StopTextInput();
+	    break;
+
+	  case MenuNewNumDecks:
+	    game.num_decks = (unsigned) atoi(game.num_decks_str);
+	    normalize_num_decks(&game);
+	    shuffle(&game.shoe);
+	    game.num_decks_str[0] = '\0';
+	    game.current_menu = MenuDecks;
+	    SDL_StopTextInput();
+ 
+	    break;
+	  }
+
 	  break;
 	}
 
@@ -94,6 +125,10 @@ int main(int argc, char *argv[])
 	{
 	case MenuNewBet:
 	  handle_new_bet_keystroke(&game, event.text.text);
+	  break;
+
+	case MenuNewNumDecks:
+	  handle_new_num_decks_keystroke(&game, event.text.text);
 	  break;
 	}
 

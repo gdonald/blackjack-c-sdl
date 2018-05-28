@@ -164,7 +164,6 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
 
       if(inside_rect(game->btn_rects[BtnOptions], mouse_x, mouse_y))
       {
-	//game_options(game);
 	game->current_menu = MenuDecks;
 	return;
       }
@@ -178,13 +177,14 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
     {
       if(inside_rect(game->btn_rects[BtnDecks], mouse_x, mouse_y))
       {
-	//get_new_num_decks(game);
+	SDL_StartTextInput();
+	game->current_menu = MenuNewNumDecks;
 	return;
       }
 
       if(inside_rect(game->btn_rects[BtnType], mouse_x, mouse_y))
       {
-	//get_new_deck_type(game);
+
 	return;
       }
 
@@ -195,6 +195,25 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
       }
     }
   }
+}
+
+void handle_new_num_decks_keystroke(struct Game *game, char *keystroke)
+{
+  if(isdigit(*keystroke))
+  {
+    if(strlen(game->num_decks_str) < sizeof(game->num_decks_str))
+    {
+      strcat(game->num_decks_str, keystroke);
+    }
+  }
+}
+
+void draw_num_decks_menu(struct Game *game)
+{
+  int x = (game->screen_w / 2) - 100;
+  char str[32] = { 0 };
+  snprintf(str, sizeof(str), "Number of Decks (%d-%d): %s", MIN_NUM_DECKS, MAX_NUM_DECKS, game->num_decks_str);
+  write_text(game, str, FontLg, x, (int)game->buttons_y_offset);
 }
 
 void handle_new_bet_keystroke(struct Game *game, char *keystroke)
@@ -338,17 +357,17 @@ void draw_decks_menu(struct Game *game)
   clip[BtnBack].w = BTN_W;
   clip[BtnBack].h = BTN_H;
 
-  game->btn_rects[BtnDecks].x = (game->screen_w / 2) - (BTN_W * 2) - (BTN_SPACE) - (BTN_SPACE / 2);
+  game->btn_rects[BtnDecks].x = (game->screen_w / 2) - (BTN_W * 3 / 2) - BTN_SPACE;
   game->btn_rects[BtnDecks].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnDecks].w = BTN_W;
   game->btn_rects[BtnDecks].h = BTN_H;
 
-  game->btn_rects[BtnType].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnType].x = (game->screen_w / 2) - (BTN_W / 2);
   game->btn_rects[BtnType].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnType].w = BTN_W;
   game->btn_rects[BtnType].h = BTN_H;
 
-  game->btn_rects[BtnBack].x = (game->screen_w / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnBack].x = (game->screen_w / 2) + (BTN_W / 2) + BTN_SPACE;
   game->btn_rects[BtnBack].y = (int)game->buttons_y_offset;
   game->btn_rects[BtnBack].w = BTN_W;
   game->btn_rects[BtnBack].h = BTN_H;
@@ -374,8 +393,10 @@ void draw_menus(struct Game *game)
     draw_game_menu(game);
     break;
   case MenuNewBet:
-    SDL_StartTextInput();
     draw_bet_menu(game);
+    break;
+  case MenuNewNumDecks:
+    draw_num_decks_menu(game);
     break;
   }
 }
@@ -849,6 +870,18 @@ void normalize_bet(struct Game *game)
   }
 }
 
+void normalize_num_decks(struct Game *game)
+{
+  if(game->num_decks < MIN_NUM_DECKS)
+  {
+    game->num_decks = MIN_NUM_DECKS;
+  }
+  else if(game->num_decks > MAX_NUM_DECKS)
+  {
+    game->num_decks = MAX_NUM_DECKS;
+  }
+}
+
 void save_game(const struct Game *game)
 {
   FILE *fp = fopen(SAVE_FILE, "w");
@@ -1241,6 +1274,7 @@ void get_new_bet(struct Game *game)
 }
 */
 
+/*
 void get_new_num_decks(struct Game *game)
 {
   unsigned tmp;
@@ -1258,7 +1292,9 @@ void get_new_num_decks(struct Game *game)
   game->num_decks = tmp;
   game_options(game);
 }
+*/
 
+/*
 void get_new_deck_type(struct Game *game)
 {
   bool br = false;
@@ -1308,7 +1344,9 @@ void get_new_deck_type(struct Game *game)
     }
   }
 }
+*/
 
+/*
 void game_options(struct Game *game)
 {
   bool br = false;
@@ -1342,6 +1380,7 @@ void game_options(struct Game *game)
     if(br) break;
   }
 }
+*/
 
 void process(struct Game *game)
 {

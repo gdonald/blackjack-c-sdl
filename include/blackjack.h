@@ -19,6 +19,8 @@
 #define MAX_PLAYER_HANDS 6
 #define MIN_BET 500
 #define MAX_BET 10000000
+#define MIN_NUM_DECKS 1
+#define MAX_NUM_DECKS 8
 #define SAVE_FILE "bj.txt"
 
 #define SCREEN_W  1024
@@ -53,7 +55,7 @@ enum Buttons { BtnDbl, BtnHit, BtnStand, BtnSplit,
 	       BtnDeal, BtnBet, BtnOptions, BtnQuit,
                BtnDecks, BtnType, BtnBack };
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
-enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks };
+enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks, MenuNewNumDecks };
 enum FontSizes { FontSm, FontMd, FontLg };
 
 extern const unsigned shuffle_specs[8][2];
@@ -116,6 +118,7 @@ struct Game
   unsigned money;
   unsigned current_bet;
   char current_bet_str[8];
+  char num_decks_str[4];
   unsigned current_player_hand;
   unsigned total_player_hands;
   const unsigned (*shuffle_specs)[2];
@@ -160,9 +163,11 @@ unsigned all_bets(const struct Game *game);
 unsigned myrand(unsigned min, unsigned max);
 
 void handle_new_bet_keystroke(struct Game *game, char *keystroke);
+void handle_new_num_decks_keystroke(struct Game *game, char *keystroke);
 void draw_bet_menu(struct Game *game);
 void load_fonts(struct Game *game);
 void draw_bet(const struct Game *game);
+void draw_num_decks_menu(struct Game *game);
 void draw_money(const struct Game *game);
 void write_text(const struct Game *game, const char *text, const int font_size, const int x, const int y);
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
@@ -175,6 +180,7 @@ void load_window_icon(SDL_Window *window);
 
 void calculate_offsets(struct Game *game);
 void normalize_bet(struct Game *game);
+void normalize_num_decks(struct Game *game);
 void save_game(const struct Game *game);
 void load_game(struct Game *game);
 void pay_hands(struct Game *game);
