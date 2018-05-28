@@ -51,11 +51,16 @@ extern struct argp_option options[];
 
 enum CountMethod { Soft, Hard };
 enum HandStatus { Won=1, Lost, Push };
-enum Buttons { BtnDbl, BtnHit, BtnStand, BtnSplit,
-	       BtnDeal, BtnBet, BtnOptions, BtnQuit,
-               BtnDecks, BtnType, BtnBack };
+enum Buttons
+{
+  BtnDbl, BtnHit, BtnStand, BtnSplit,
+  BtnDeal, BtnBet, BtnOptions, BtnQuit,
+  BtnDecks, BtnType, BtnBack,
+  BtnRegular, BtnAces, BtnJacks, BtnAcesJacks, BtnSevens, BtnEights,
+  BtnCount
+};
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
-enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks, MenuNewNumDecks };
+enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks, MenuNewNumDecks, MenuDeckType };
 enum FontSizes { FontSm, FontMd, FontLg };
 
 extern const unsigned shuffle_specs[8][2];
@@ -125,8 +130,8 @@ struct Game
   const char *const (*card_faces)[4];
   SDL_Renderer *renderer;
   SDL_Texture *cards_texture;
-  SDL_Texture *btn_textures[11];
-  SDL_Rect btn_rects[11];
+  SDL_Texture *btn_textures[BtnCount];
+  SDL_Rect btn_rects[BtnCount];
   unsigned current_menu;
   TTF_Font *fonts[3];
 };
@@ -174,6 +179,7 @@ void draw_card(const struct Game *game, const struct Card *card, const unsigned 
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
 void draw_decks_menu(struct Game *game);
+void draw_deck_type_menu(struct Game *game);
 void draw_menus(struct Game *game);
 void load_btn_textures(struct Game *game);
 void load_window_icon(SDL_Window *window);
@@ -194,7 +200,6 @@ void insure_hand(struct Game *game);
 void no_insurance(struct Game *game);
 void ask_insurance(struct Game *game);
 void deal_new_hand(struct Game *game);
-//void get_new_bet(struct Game *game);
 void game_options(struct Game *game);
 void get_new_num_decks(struct Game *game);
 void get_new_deck_type(struct Game *game);

@@ -81,15 +81,13 @@ int main(int argc, char *argv[])
 	    {
 	      game.current_bet_str[strlen(game.current_bet_str) - 1] = '\0';
 	    }
-
 	    break;
 
 	  case MenuNewNumDecks:
 	    if(strlen(game.num_decks_str))
 	    {
 	      game.num_decks_str[strlen(game.num_decks_str) - 1] = '\0';
-	    }
- 
+	    } 
 	    break;
 	  }
 
@@ -103,7 +101,6 @@ int main(int argc, char *argv[])
 	    normalize_bet(&game);
 	    game.current_bet_str[0] = '\0';
 	    game.current_menu = MenuGame;
-	    SDL_StopTextInput();
 	    break;
 
 	  case MenuNewNumDecks:
@@ -112,11 +109,10 @@ int main(int argc, char *argv[])
 	    shuffle(&game.shoe);
 	    game.num_decks_str[0] = '\0';
 	    game.current_menu = MenuDecks;
-	    SDL_StopTextInput();
- 
 	    break;
 	  }
-
+	  
+	  SDL_StopTextInput();
 	  break;
 	}
 
@@ -147,7 +143,6 @@ int main(int argc, char *argv[])
 	  game.screen_w = (unsigned) event.window.data1;
 	  game.screen_h = (unsigned) event.window.data2;
 	  calculate_offsets(&game);
-
 	  break;
 	}
       }
