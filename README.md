@@ -13,4 +13,4 @@ make
 
 ./blackjack
 
-![Blackjack](https://raw.githubusercontent.com/gdonald/blackjack-c-sdl/master/img/ss.png)
+![Blackjack](https://gitlab.com/gdonald/blackjack-c-sdl/raw/master/img/ss.png)
