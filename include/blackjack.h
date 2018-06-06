@@ -57,10 +57,11 @@ enum Buttons
   BtnDeal, BtnBet, BtnOptions, BtnQuit,
   BtnDecks, BtnType, BtnBack,
   BtnRegular, BtnAces, BtnJacks, BtnAcesJacks, BtnSevens, BtnEights,
+  BtnInsureYes, BtnInsureNo,
   BtnCount
 };
 enum ButtonStates { BtnUp=0, BtnDown=40, BtnOff=80 };
-enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks, MenuNewNumDecks, MenuDeckType };
+enum Menus { MenuGame, MenuHand, MenuNewBet, MenuDecks, MenuNewNumDecks, MenuDeckType, MenuInsurance };
 enum FontSizes { FontSm, FontMd, FontLg };
 
 extern const unsigned shuffle_specs[8][2];
@@ -176,6 +177,7 @@ void draw_num_decks_menu(struct Game *game);
 void draw_money(const struct Game *game);
 void write_text(const struct Game *game, const char *text, const int font_size, const int x, const int y);
 void draw_card(const struct Game *game, const struct Card *card, const unsigned x, const unsigned y);
+void draw_insurance_menu(struct Game *game);
 void draw_hand_menu(struct Game *game);
 void draw_game_menu(struct Game *game);
 void draw_decks_menu(struct Game *game);
@@ -198,7 +200,6 @@ void swap(struct Card *a, struct Card *b);
 void shuffle(struct Shoe *shoe);
 void insure_hand(struct Game *game);
 void no_insurance(struct Game *game);
-void ask_insurance(struct Game *game);
 void deal_new_hand(struct Game *game);
 void process(struct Game *game);
 void play_more_hands(struct Game *game);

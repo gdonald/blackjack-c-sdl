@@ -151,6 +151,11 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
     if(inside_rect(game->btn_rects[BtnSevens],    mouse_x, mouse_y)) { new_sevens(game);     game->current_menu = MenuDecks; return; }
     if(inside_rect(game->btn_rects[BtnEights],    mouse_x, mouse_y)) { new_eights(game);     game->current_menu = MenuDecks; return; }
     break;
+
+  case MenuInsurance:
+    if(inside_rect(game->btn_rects[BtnInsureYes], mouse_x, mouse_y)) { insure_hand(game);  return; }
+    if(inside_rect(game->btn_rects[BtnInsureNo],  mouse_x, mouse_y)) { no_insurance(game); return; }
+    break;
   }
 }
 
@@ -409,6 +414,38 @@ void draw_deck_type_menu(struct Game *game)
   game->current_menu = MenuDeckType;
 }
 
+void draw_insurance_menu(struct Game *game)
+{
+  int x = (game->screen_w / 2) - 255;
+  write_text(game, "Insurance ?", FontLg, x, (int)game->buttons_y_offset + 8);
+
+  SDL_Rect clip[BtnCount];
+  clip[BtnInsureNo].x = 0;
+  clip[BtnInsureNo].y = BtnUp;
+  clip[BtnInsureNo].w = BTN_W;
+  clip[BtnInsureNo].h = BTN_H;
+
+  clip[BtnInsureYes].x = 0;
+  clip[BtnInsureYes].y = BtnUp;
+  clip[BtnInsureYes].w = BTN_W;
+  clip[BtnInsureYes].h = BTN_H;
+
+  game->btn_rects[BtnInsureNo].x = (game->screen_w / 2) - BTN_W - (BTN_SPACE / 2);
+  game->btn_rects[BtnInsureNo].y = (int)game->buttons_y_offset;
+  game->btn_rects[BtnInsureNo].w = BTN_W;
+  game->btn_rects[BtnInsureNo].h = BTN_H;
+
+  game->btn_rects[BtnInsureYes].x = (game->screen_w / 2) + (BTN_SPACE / 2);
+  game->btn_rects[BtnInsureYes].y = (int)game->buttons_y_offset;
+  game->btn_rects[BtnInsureYes].w = BTN_W;
+  game->btn_rects[BtnInsureYes].h = BTN_H;
+
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnInsureNo],  &clip[BtnInsureNo],  &game->btn_rects[BtnInsureNo]);
+  SDL_RenderCopy(game->renderer, game->btn_textures[BtnInsureYes], &clip[BtnInsureYes], &game->btn_rects[BtnInsureYes]);
+
+  game->current_menu = MenuInsurance;
+}
+
 void draw_menus(struct Game *game)
 {
   switch(game->current_menu)
@@ -430,6 +467,9 @@ void draw_menus(struct Game *game)
     break;
   case MenuDeckType:
     draw_deck_type_menu(game);
+    break;
+  case MenuInsurance:
+    draw_insurance_menu(game);
     break;
   }
 }
@@ -453,6 +493,8 @@ void load_btn_textures(struct Game *game)
   SDL_Surface *btn_aces_jacks_surface = SDL_LoadBMP("img/btn_aces_jacks.bmp");
   SDL_Surface *btn_sevens_surface     = SDL_LoadBMP("img/btn_sevens.bmp");
   SDL_Surface *btn_eights_surface     = SDL_LoadBMP("img/btn_eights.bmp");
+  SDL_Surface *btn_insure_yes_surface = SDL_LoadBMP("img/btn_insure_yes.bmp");
+  SDL_Surface *btn_insure_no_surface  = SDL_LoadBMP("img/btn_insure_no.bmp");
 
   if(btn_hit_surface        == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_hit.bmp",        SDL_GetError()); exit(EXIT_FAILURE); }
   if(btn_split_surface      == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_split.bmp",      SDL_GetError()); exit(EXIT_FAILURE); }
@@ -471,6 +513,8 @@ void load_btn_textures(struct Game *game)
   if(btn_aces_jacks_surface == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_aces_jacks.bmp", SDL_GetError()); exit(EXIT_FAILURE); }
   if(btn_sevens_surface     == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_sevens.bmp",     SDL_GetError()); exit(EXIT_FAILURE); }
   if(btn_eights_surface     == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_eights.bmp",     SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_insure_yes_surface == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_insure_yes.bmp", SDL_GetError()); exit(EXIT_FAILURE); }
+  if(btn_insure_no_surface  == NULL) { printf("Unable to load image %s! SDL Error: %s\n", "img/btn_insure_no.bmp",  SDL_GetError()); exit(EXIT_FAILURE); }
 
   game->btn_textures[BtnHit]       = SDL_CreateTextureFromSurface(game->renderer, btn_hit_surface);
   game->btn_textures[BtnSplit]     = SDL_CreateTextureFromSurface(game->renderer, btn_split_surface);
@@ -489,6 +533,8 @@ void load_btn_textures(struct Game *game)
   game->btn_textures[BtnAcesJacks] = SDL_CreateTextureFromSurface(game->renderer, btn_aces_jacks_surface);
   game->btn_textures[BtnSevens]    = SDL_CreateTextureFromSurface(game->renderer, btn_sevens_surface);
   game->btn_textures[BtnEights]    = SDL_CreateTextureFromSurface(game->renderer, btn_eights_surface);
+  game->btn_textures[BtnInsureYes] = SDL_CreateTextureFromSurface(game->renderer, btn_insure_yes_surface);
+  game->btn_textures[BtnInsureNo]  = SDL_CreateTextureFromSurface(game->renderer, btn_insure_no_surface);
 
   SDL_FreeSurface(btn_hit_surface);
   SDL_FreeSurface(btn_stand_surface);
@@ -507,6 +553,8 @@ void load_btn_textures(struct Game *game)
   SDL_FreeSurface(btn_aces_jacks_surface);
   SDL_FreeSurface(btn_sevens_surface);
   SDL_FreeSurface(btn_eights_surface);
+  SDL_FreeSurface(btn_insure_yes_surface);
+  SDL_FreeSurface(btn_insure_no_surface);
 }
 
 SDL_Texture *load_cards_texture(SDL_Renderer *renderer)
@@ -1186,36 +1234,6 @@ void no_insurance(struct Game *game)
   game->current_menu = MenuHand;
 }
 
-void ask_insurance(struct Game *game)
-{
-  printf(" Insurance?  (Y) Yes  (N) No\n");
-  bool br = false;
-  char c = { 0 };
-
-  while(true)
-  {
-    c = (char)getchar();
-
-    switch(c)
-    {
-    case 'y':
-      br = true;
-      insure_hand(game);
-      break;
-    case 'n':
-      br = true;
-      no_insurance(game);
-      break;
-    default:
-      br = true;
-      ask_insurance(game);
-      break;
-    }
-
-    if(br) break;
-  }
-}
-
 void deal_new_hand(struct Game *game)
 {
   struct PlayerHand player_hand = { .bet=game->current_bet };
@@ -1241,9 +1259,7 @@ void deal_new_hand(struct Game *game)
   
   if(dealer_upcard_is_ace(dealer_hand) && !is_blackjack(&player_hand.hand))
   {
-    // TODO
-    //ask_insurance(game);
-    game->current_menu = MenuHand;
+    game->current_menu = MenuInsurance;
     return;
   }
 
