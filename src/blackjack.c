@@ -84,7 +84,7 @@ void load_fonts(struct Game *game)
 void draw_money(const struct Game *game)
 {
   char str[32];
-  sprintf(str, "Money: $%.2f", (double)(game->money / 100));
+  sprintf(str, "Money: $%.2f", (double)(game->money / 100.0f));
   write_text(game, str, FontLg, 7, 5);
 }
 
@@ -144,12 +144,12 @@ void handle_click(struct Game *game, SDL_MouseButtonEvent *button, int mouse_x, 
     break;
 
   case MenuDeckType:
-    if(inside_rect(game->btn_rects[BtnRegular],   mouse_x, mouse_y)) { new_regular(game);    game->current_menu = MenuDecks; return; }
-    if(inside_rect(game->btn_rects[BtnAces],      mouse_x, mouse_y)) { new_aces(game);       game->current_menu = MenuDecks; return; }
-    if(inside_rect(game->btn_rects[BtnJacks],     mouse_x, mouse_y)) { new_jacks(game);      game->current_menu = MenuDecks; return; }
-    if(inside_rect(game->btn_rects[BtnAcesJacks], mouse_x, mouse_y)) { new_aces_jacks(game); game->current_menu = MenuDecks; return; }
-    if(inside_rect(game->btn_rects[BtnSevens],    mouse_x, mouse_y)) { new_sevens(game);     game->current_menu = MenuDecks; return; }
-    if(inside_rect(game->btn_rects[BtnEights],    mouse_x, mouse_y)) { new_eights(game);     game->current_menu = MenuDecks; return; }
+    if(inside_rect(game->btn_rects[BtnRegular],   mouse_x, mouse_y)) { new_regular(game);    game->current_menu = MenuHand; deal_new_hand(game); return; }
+    if(inside_rect(game->btn_rects[BtnAces],      mouse_x, mouse_y)) { new_aces(game);       game->current_menu = MenuHand; deal_new_hand(game); return; }
+    if(inside_rect(game->btn_rects[BtnJacks],     mouse_x, mouse_y)) { new_jacks(game);      game->current_menu = MenuHand; deal_new_hand(game); return; }
+    if(inside_rect(game->btn_rects[BtnAcesJacks], mouse_x, mouse_y)) { new_aces_jacks(game); game->current_menu = MenuHand; deal_new_hand(game); return; }
+    if(inside_rect(game->btn_rects[BtnSevens],    mouse_x, mouse_y)) { new_sevens(game);     game->current_menu = MenuHand; deal_new_hand(game); return; }
+    if(inside_rect(game->btn_rects[BtnEights],    mouse_x, mouse_y)) { new_eights(game);     game->current_menu = MenuHand; deal_new_hand(game); return; }
     break;
 
   case MenuInsurance:
@@ -989,7 +989,7 @@ void pay_hands(struct Game *game)
     {
       if(is_blackjack(&player_hand->hand))
       {
-	player_hand->bet *= 1.5;
+	player_hand->bet *= 1.5f;
       }
 
       game->money += player_hand->bet;
@@ -1127,7 +1127,7 @@ void draw_player_hands(const struct Game *game)
 
       if(c == 0)
       {
-	sprintf(str, "%s$%.2f%s", plus_minus, (double)(player_hand->bet / 100), current);
+	sprintf(str, "%s$%.2f%s", plus_minus, (double)(player_hand->bet / 100.0f), current);
 	write_text(game, str, FontMd, (int) x + 3, (int)game->player_hands_y_offset + CARD_H + 2);
       }
 

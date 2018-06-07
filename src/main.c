@@ -42,9 +42,6 @@ int main(int argc, char *argv[])
   load_game(&game);
 
   new_regular(&game);
-  //new_aces(&game);
-  //new_eights(&game);
-
   deal_new_hand(&game);
   
   while(!quit)
@@ -100,7 +97,8 @@ int main(int argc, char *argv[])
 	    game.current_bet = (unsigned) atoi(game.current_bet_str) * 100;
 	    normalize_bet(&game);
 	    game.current_bet_str[0] = '\0';
-	    game.current_menu = MenuGame;
+	    game.current_menu = MenuHand;
+	    deal_new_hand(&game);
 	    break;
 
 	  case MenuNewNumDecks:
@@ -108,7 +106,8 @@ int main(int argc, char *argv[])
 	    normalize_num_decks(&game);
 	    shuffle(&game.shoe);
 	    game.num_decks_str[0] = '\0';
-	    game.current_menu = MenuDecks;
+	    game.current_menu = MenuHand;
+	    deal_new_hand(&game);
 	    break;
 	  }
 	  
