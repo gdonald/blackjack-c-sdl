@@ -1,12 +1,8 @@
 
 #include "blackjack.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
-  struct argp argp = { options, parse_opt, "", doc, 0, 0, 0 };
-  struct arguments arguments = { .players = 1 };
-  argp_parse(&argp, argc, argv, 0, 0, &arguments);
-
   srand((unsigned)time(NULL));
 
   int mouse_x, mouse_y;
@@ -20,8 +16,6 @@ int main(int argc, char *argv[])
 		       .money = 10000,
 		       .current_bet = 500,
 		       .shuffle_specs = shuffle_specs,
-		       .card_faces = card_faces,
-		       .num_players = arguments.players,
 		       .current_menu = MenuHand
   };
 
