@@ -1027,12 +1027,13 @@ void draw_dealer_hand(const struct Game *game)
 
 void draw_player_hands(const struct Game *game)
 {
-  unsigned x_offset, x, h, c, hands_w = 0;
+  unsigned x_offset, x, h, c, hands_w = 0, hand_w;
+  int count_w, count_h;
   char str[32], plus_minus[1], current[2];
 
   const struct PlayerHand *player_hand;
   const struct Card *card;
-  
+
   for(h = 0; h < game->total_player_hands; h++)
   {
     player_hand = &game->player_hands[h];
@@ -1057,6 +1058,15 @@ void draw_player_hands(const struct Game *game)
   {
     player_hand = &game->player_hands[h];
 
+    hand_w = 0;
+    
+    for(c = 0; c < player_hand->hand.num_cards - 1; c++)
+    {
+      hand_w += CARD_DRAW_SPACING;
+    }
+
+    hand_w += CARD_W;
+    
     if(player_hand->status == Lost)
     {
       sprintf(plus_minus, "-");
@@ -1088,6 +1098,10 @@ void draw_player_hands(const struct Game *game)
       {
 	sprintf(str, "%s$%.2f%s", plus_minus, (double)(player_hand->bet / 100.0f), current);
 	write_text(game, str, FontMd, (int) x + 3, (int)game->player_hands_y_offset + CARD_H + 2);
+
+	sprintf(str, "%d", player_get_value(player_hand, Soft));
+	TTF_SizeText(game->fonts[FontMd], str, &count_w, &count_h);
+	write_text(game, str, FontMd, (int)(x + hand_w - (unsigned)count_w - 3), (int)game->player_hands_y_offset + CARD_H + 2);
       }
 
       if(c < player_hand->hand.num_cards - 1)
