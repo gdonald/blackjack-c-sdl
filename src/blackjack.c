@@ -1007,8 +1007,18 @@ void draw_dealer_hand(const struct Game *game)
 {
   const struct DealerHand *dealer_hand = &game->dealer_hand;
   const struct Card *card;
+  unsigned hand_w = 0;
+  int count_w, count_h;
+  char str[32];
 
   unsigned x_offset = (game->screen_w / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
+
+  for(unsigned c = 0; c < dealer_hand->hand.num_cards - 1; c++)
+  {
+    hand_w += CARD_DRAW_SPACING;
+  }
+
+  hand_w += CARD_W;
 
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
@@ -1021,6 +1031,13 @@ void draw_dealer_hand(const struct Game *game)
     {
       card = &dealer_hand->hand.cards[i];
       draw_card(game, card, x_offset + (i * CARD_DRAW_SPACING), DEALER_HAND_Y_OFFSET);
+    }
+
+    if(i == 0)
+    {
+      sprintf(str, "%d", dealer_get_value(dealer_hand, Soft));
+      TTF_SizeText(game->fonts[FontMd], str, &count_w, &count_h);
+      write_text(game, str, FontMd, (int)(x_offset + hand_w - (unsigned)count_w - 3), (int)DEALER_HAND_Y_OFFSET + CARD_H + 2);
     }
   }
 }
