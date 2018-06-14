@@ -1003,22 +1003,19 @@ void play_dealer_hand(struct Game *game)
   pay_hands(game);
 }
 
+unsigned hand_width(const unsigned num_cards)
+{
+  return ((num_cards - 1) * CARD_DRAW_SPACING) + CARD_W;
+}
+
 void draw_dealer_hand(const struct Game *game)
 {
   const struct DealerHand *dealer_hand = &game->dealer_hand;
   const struct Card *card;
-  unsigned hand_w = 0;
   int count_w, count_h;
   char str[32];
 
   unsigned x_offset = (game->screen_w / 2) - ((((dealer_hand->hand.num_cards - 1) * CARD_DRAW_SPACING) + CARD_W) / 2);
-
-  for(unsigned c = 0; c < dealer_hand->hand.num_cards - 1; c++)
-  {
-    hand_w += CARD_DRAW_SPACING;
-  }
-
-  hand_w += CARD_W;
 
   for(unsigned i = 0; i < dealer_hand->hand.num_cards; ++i)
   {
@@ -1037,14 +1034,14 @@ void draw_dealer_hand(const struct Game *game)
     {
       sprintf(str, "%d", dealer_get_value(dealer_hand, Soft));
       TTF_SizeText(game->fonts[FontMd], str, &count_w, &count_h);
-      write_text(game, str, FontMd, (int)(x_offset + hand_w - (unsigned)count_w - 3), (int)DEALER_HAND_Y_OFFSET + CARD_H + 2);
+      write_text(game, str, FontMd, (int)(x_offset + hand_width(dealer_hand->hand.num_cards) - (unsigned)count_w - 3), (int)DEALER_HAND_Y_OFFSET + CARD_H + 2);
     }
   }
 }
 
 void draw_player_hands(const struct Game *game)
 {
-  unsigned x_offset, x, h, c, hands_w = 0, hand_w;
+  unsigned x_offset, x, h, c, hands_w = 0;
   int count_w, count_h;
   char str[32], plus_minus[1], current[2];
 
@@ -1074,15 +1071,6 @@ void draw_player_hands(const struct Game *game)
   for(h = 0; h < game->total_player_hands; h++)
   {
     player_hand = &game->player_hands[h];
-
-    hand_w = 0;
-    
-    for(c = 0; c < player_hand->hand.num_cards - 1; c++)
-    {
-      hand_w += CARD_DRAW_SPACING;
-    }
-
-    hand_w += CARD_W;
     
     if(player_hand->status == Lost)
     {
@@ -1118,7 +1106,7 @@ void draw_player_hands(const struct Game *game)
 
 	sprintf(str, "%d", player_get_value(player_hand, Soft));
 	TTF_SizeText(game->fonts[FontMd], str, &count_w, &count_h);
-	write_text(game, str, FontMd, (int)(x + hand_w - (unsigned)count_w - 3), (int)game->player_hands_y_offset + CARD_H + 2);
+	write_text(game, str, FontMd, (int)(x + hand_width(player_hand->hand.num_cards) - (unsigned)count_w - 3), (int)game->player_hands_y_offset + CARD_H + 2);
       }
 
       if(c < player_hand->hand.num_cards - 1)

@@ -145,6 +145,7 @@ bool dealer_is_busted(const struct DealerHand *dealer_hand);
 bool dealer_upcard_is_ace(const struct DealerHand *dealer_hand);
 bool need_to_shuffle(const struct Game *game);
 
+unsigned hand_width(const unsigned num_cards);
 unsigned player_get_value(const struct PlayerHand *player_hand, enum CountMethod method);
 unsigned dealer_get_value(const struct DealerHand *dealer_hand, enum CountMethod method);
 unsigned all_bets(const struct Game *game);
