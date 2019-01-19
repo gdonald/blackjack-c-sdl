@@ -2,3 +2,4 @@ blackjack
 *.o
 *~
 bj.txt
+.idea
