@@ -1085,13 +1085,13 @@ void draw_player_hands(const struct Game *game) {
     } else if (player_hand->status == Won) {
       sprintf(plus_minus, "+");
     } else {
-      sprintf(plus_minus, "");
+      plus_minus[0] = '\0';
     }
 
     if (!player_hand->played && h == game->current_player_hand) {
       sprintf(current, " *");
     } else {
-      sprintf(current, "");
+      current[0] = '\0';
     }
 
     for (c = 0; c < player_hand->hand.num_cards; c++) {
