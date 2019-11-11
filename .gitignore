@@ -3,3 +3,8 @@ blackjack
 *~
 bj.txt
 .idea
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+blackjack.cbp
