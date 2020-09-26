@@ -2,7 +2,9 @@
 #include "blackjack.h"
 
 int main(void) {
-  srand((unsigned) time(NULL));
+  struct timeval time;
+  gettimeofday(&time, NULL);
+  srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
   int mouse_x, mouse_y;
   bool quit = false;

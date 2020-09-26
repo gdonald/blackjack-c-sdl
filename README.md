@@ -9,13 +9,13 @@ Blackjack written in C using SDL
 
 For Debian:
 
-    apt install cmake clang libsdl2-dev libsdl2-gfx-dev libsdl2-ttf-dev
+    apt install cmake clang libsdl2-dev libsdl2-gfx-dev libsdl2-ttf-dev libsdl2-image-dev
 
 ### Mac OS
 
 Install Xcode to acquire `clang`.  Next install Homebrew and do
 
-    brew install cmake sdl2 sdl2_gfx sdl2_ttf
+    brew install cmake sdl2 sdl2_gfx sdl2_ttf sdl2_image
 
 ## Build
 

@@ -671,8 +671,8 @@ SDL_Window *create_window(const struct Game *game) {
 
   SDL_Window *window = SDL_CreateWindow(
       "Blackjack",
-      SDL_WINDOWPOS_UNDEFINED,
-      SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_CENTERED,
+      SDL_WINDOWPOS_CENTERED,
       (int) game->screen_w,
       (int) game->screen_h,
       SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
