@@ -8,3 +8,7 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 blackjack.cbp
+.DS_Store
+.cmake
+Testing
+cmake-build-debug
