@@ -45,3 +45,4 @@ I've written Blackjack in several other languages:
 - [Go](https://github.com/gdonald/blackjack-go)
 - [Elixir](https://github.com/gdonald/blackjack-ex)
 - [Python](https://github.com/gdonald/blackjack-py)
+- [Emacs Lisp](https://github.com/gdonald/bj-el)
