@@ -95,7 +95,7 @@ struct PlayerHand {
   unsigned bet;
   bool stood;
   bool played;
-  bool payed;
+  bool paid;
   enum HandStatus status;
 };
 

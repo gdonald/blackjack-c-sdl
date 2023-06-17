@@ -847,8 +847,8 @@ bool player_is_done(struct Game *game, struct PlayerHand *player_hand) {
       || 21 == player_get_value(player_hand, Hard)) {
     player_hand->played = true;
 
-    if (!player_hand->payed && player_is_busted(player_hand)) {
-      player_hand->payed = true;
+    if (!player_hand->paid && player_is_busted(player_hand)) {
+      player_hand->paid = true;
       player_hand->status = Lost;
       game->money -= player_hand->bet;
     }
@@ -965,11 +965,11 @@ void pay_hands(struct Game *game) {
   for (unsigned x = 0; x < game->total_player_hands; ++x) {
     player_hand = &game->player_hands[x];
 
-    if (player_hand->payed) {
+    if (player_hand->paid) {
       continue;
     }
 
-    player_hand->payed = true;
+    player_hand->paid = true;
 
     phv = player_get_value(player_hand, Soft);
 
@@ -1163,7 +1163,7 @@ void insure_hand(struct Game *game) {
 
   player_hand->bet /= 2;
   player_hand->played = true;
-  player_hand->payed = true;
+  player_hand->paid = true;
   player_hand->status = Lost;
   game->money -= player_hand->bet;
 
