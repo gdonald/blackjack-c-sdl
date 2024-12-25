@@ -47,3 +47,5 @@ I've written Blackjack in several other languages:
 - [Elixir](https://github.com/gdonald/blackjack-ex)
 - [Python](https://github.com/gdonald/blackjack-py)
 - [Emacs Lisp](https://github.com/gdonald/blackjack-el)
+- [Smalltalk](https://github.com/gdonald/blackjack-st)
+
